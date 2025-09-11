@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import AntdProvider from "./AntdRegistry";
-import { YandexMetrika } from './YandexMetrika'
+import { VKMetrika } from './VKMetrika'
 
 const poppins = Poppins({
   subsets: ["latin-ext"],
@@ -28,8 +28,8 @@ export default function RootLayout({
   return (
 		<html lang='ru'>
 			<body className={poppins.className}>
-				<YandexMetrika />
-				<AntdProvider>{children}</AntdProvider>
+                                <VKMetrika />
+                                <AntdProvider>{children}</AntdProvider>
 			</body>
 		</html>
   )
