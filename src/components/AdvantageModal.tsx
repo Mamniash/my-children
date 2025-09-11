@@ -255,14 +255,14 @@ const AdvantageModal: React.FC<AdvantageModalProps> = ({
 				<div className='mt-4'>{renderChart()}</div>
 
 				<div className='text-center mt-6'>
-					<Button
-						type='primary'
-						shape='round'
-						size='large'
-						onClick={() => setOrderOpen(true)}
-					>
-                                            Запустить бота
-					</Button>
+                                        <Button
+                                                type='primary'
+                                                shape='round'
+                                                size='large'
+                                                onClick={() => setOrderOpen(true)}
+                                        >
+                                                Получить гайд
+                                        </Button>
 				</div>
 			</Modal>
 

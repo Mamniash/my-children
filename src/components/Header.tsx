@@ -21,9 +21,9 @@ const Header = () => {
 					transition={{ duration: 0.5 }}
 					className='flex items-center'
 				>
-					<Link href='#head' className='flex items-center'>
-						<span className='text-xl font-bold italic'>Вовлекатор</span>
-					</Link>
+                                        <Link href='#head' className='flex items-center'>
+                                                <span className='text-xl font-bold italic'>0→1</span>
+                                        </Link>
 				</motion.div>
 
 				<motion.div
@@ -43,15 +43,15 @@ const Header = () => {
 					{/* placeholder for additional actions */}
 
 					{/* Условная отрисовка текста на кнопке "Заказать" в зависимости от разрешения */}
-					<Button
-						className='py-4 sm:text-sm md:text-base lg:text-lg ml-3'
-						type='primary'
-						shape='round'
-						size='large'
-						onClick={() => setIsModalOpen(true)}
-					>
-						{isMobile ? 'Запустить' : 'Запустить бота'}
-					</Button>
+                                        <Button
+                                                className='py-4 sm:text-sm md:text-base lg:text-lg ml-3'
+                                                type='primary'
+                                                shape='round'
+                                                size='large'
+                                                onClick={() => setIsModalOpen(true)}
+                                        >
+                                                Получить гайд
+                                        </Button>
 					<OrderModal
 						open={isModalOpen}
 						onClose={() => setIsModalOpen(false)}

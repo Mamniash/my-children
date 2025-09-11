@@ -1,18 +1,18 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Form, Input, Button, Spin } from 'antd'
 import { motion } from 'framer-motion'
 import { sendToTelegram } from '@/helpers/telegramApi'
 
 interface SubscriptionFormProps {
-	onSuccess?: (phone: string) => void
-	onError?: (message: string) => void
+        onSuccess?: (contact: string) => void
+        onError?: (message: string) => void
 }
 
 const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
-	onSuccess,
-	onError
+        onSuccess,
+        onError
 }) => {
 	const [form] = Form.useForm()
 	const [loading, setLoading] = useState(false)
@@ -34,8 +34,8 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
                 }
         }
 
-	// Проверка, прошло ли больше минуты с последней отправки
-	const canSendPhone = (): boolean => {
+        // Проверка, прошло ли больше минуты с последней отправки
+        const canSendContact = (): boolean => {
 		const lastSentTime = localStorage.getItem('lastSent')
 		const now = Date.now()
 		if (lastSentTime && now - Number(lastSentTime) < 60 * 1000) {
@@ -50,41 +50,35 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
 		return Math.floor((Date.now() - sessionStartTime) / 1000)
 	}
 
-	// Обработчик отправки формы
-	const handleSubmit = async (values: { phone: string }) => {
-		if (!canSendPhone()) {
-			setMessageType('error')
-			setMessage('Вы можете отправить телефон не более 1 раза в минуту')
-			if (onError)
-				onError('Вы можете отправить телефон не более 1 раза в минуту')
-			return
-		}
+        // Обработчик отправки формы
+        const handleSubmit = async (values: { contact: string }) => {
+                if (!canSendContact()) {
+                        setMessageType('error')
+                        setMessage('Вы можете отправить контакт не более 1 раза в минуту')
+                        if (onError)
+                                onError('Вы можете отправить контакт не более 1 раза в минуту')
+                        return
+                }
 
-		setLoading(true)
-		const location = await getLocation()
-		const sessionTime = getSessionTimeInSeconds()
+                setLoading(true)
+                const location = await getLocation()
+                const sessionTime = getSessionTimeInSeconds()
 
-		// Отправка данных в Telegram
-		const isSent = await sendToTelegram(values.phone, location, sessionTime)
-		setLoading(false)
+                // Отправка данных в Telegram
+                const isSent = await sendToTelegram(values.contact, location, sessionTime)
+                setLoading(false)
 
-		if (isSent) {
-			setMessageType('success')
-			setMessage(`Успешно`)
-			if (onSuccess) onSuccess(values.phone)
-			form.resetFields()
-		} else {
-			setMessageType('error')
-			setMessage('Ошибка подписки. Попробуйте снова.')
-			if (onError) onError('Ошибка подписки. Попробуйте снова.')
-		}
-	}
-
-	// Фильтрация ввода только цифр и "+" для телефона
-	const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const value = e.target.value.replace(/[^0-9+]/g, '') // Заменяем всё, кроме цифр и "+"
-		form.setFieldsValue({ phone: value })
-	}
+                if (isSent) {
+                        setMessageType('success')
+                        setMessage(`Успешно`)
+                        if (onSuccess) onSuccess(values.contact)
+                        form.resetFields()
+                } else {
+                        setMessageType('error')
+                        setMessage('Ошибка отправки. Попробуйте снова.')
+                        if (onError) onError('Ошибка отправки. Попробуйте снова.')
+                }
+        }
 
 	return (
 		<>
@@ -94,18 +88,17 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
 				layout='inline'
 				className='flex flex-col sm:flex-row gap-3 mb-4'
 			>
-				<Form.Item
-					name='phone'
-					rules={[{ required: true, message: 'Введите ваш телефон' }]}
-					className='mb-0 w-full sm:w-auto'
-					style={{ flex: 1 }}
-				>
-					<Input
-						placeholder='Телефон'
-						className='rounded-full px-4 py-2'
-						onChange={handlePhoneChange} // Обрабатываем изменение в поле телефона
-					/>
-				</Form.Item>
+                                <Form.Item
+                                        name='contact'
+                                        rules={[{ required: true, message: 'Введите ваш контакт' }]}
+                                        className='mb-0 w-full sm:w-auto'
+                                        style={{ flex: 1 }}
+                                >
+                                        <Input
+                                                placeholder='Телефон или email'
+                                                className='rounded-full px-4 py-2'
+                                        />
+                                </Form.Item>
 
 				<Button
 					type='primary'
@@ -116,8 +109,8 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
 					disabled={loading || !form.isFieldsTouched(true)} // Проверка на заполнение любого поля
 					block
 				>
-                                        {loading ? <Spin /> : 'Запустить бота'}
-				</Button>
+                                        {loading ? <Spin /> : 'Получить гайд'}
+                               </Button>
 			</Form>
 
 			{/* Анимация сообщения об успехе/ошибке */}

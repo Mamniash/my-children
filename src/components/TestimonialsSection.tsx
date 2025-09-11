@@ -6,28 +6,28 @@ import { StarFilled } from '@ant-design/icons'
 import Link from 'next/link'
 
 const avatars = [
-        'https://ui-avatars.com/api/?name=Анна&background=611f69&color=fff&rounded=true&size=64',
-        'https://ui-avatars.com/api/?name=Дмитрий&background=611f69&color=fff&rounded=true&size=64',
-        'https://ui-avatars.com/api/?name=Екатерина&background=611f69&color=fff&rounded=true&size=64'
+        'https://ui-avatars.com/api/?name=Мария&background=611f69&color=fff&rounded=true&size=64',
+        'https://ui-avatars.com/api/?name=Иван&background=611f69&color=fff&rounded=true&size=64',
+        'https://ui-avatars.com/api/?name=Ольга&background=611f69&color=fff&rounded=true&size=64'
 ]
 
 const starCount = 5
 
 const testimonials = [
         {
-                name: 'Анна, HRBP',
-                text: '«После запуска онбординг-сценария новые сотрудники стали выходить на продуктивность на 2 недели раньше, а NPS вырос с 45 до 62.»',
-                tag: 'Онбординг 101'
+                name: 'Мария, дизайнер',
+                text: '«С помощью 0→1 я разобралась с налогами за один вечер и получила первых клиентов за месяц.»',
+                tag: 'Налоги'
         },
         {
-                name: 'Дмитрий, тимлид разработки',
-                text: '«Анти-силос-сценарий объединил разработку и маркетинг: совместные встречи сократили время релиза новой функции на 15%.»',
-                tag: 'Анти-силос'
+                name: 'Иван, маркетолог',
+                text: '«Пошаговый план помог не распыляться и запустить продажи без лишних курсов.»',
+                tag: 'План 0→1'
         },
         {
-                name: 'Екатерина, People Ops',
-                text: '«Отчёты системы показали, что отдел продаж подключался лишь в 60% встреч. После запуска мотивации вовлечённость выросла до 85%.»',
-                tag: 'Аналитика'
+                name: 'Ольга, фотограф',
+                text: '«Комьюнити поддержало в трудный момент и подсказало, как оформить первый договор.»',
+                tag: 'Комьюнити'
         }
 ]
 
