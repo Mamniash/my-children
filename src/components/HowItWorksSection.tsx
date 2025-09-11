@@ -5,30 +5,30 @@ import Image from 'next/image'
 import { useKeenSlider } from 'keen-slider/react'
 
 const features = [
-        {
-                title: 'Всё о налогах и отчётности на одном языке',
-                description:
-                        'Простые объяснения налоговых режимов, отчётности и обязательств без сложного жаргона.',
-                image: 'https://images.unsplash.com/photo-1554224155-8d04e2f6c590?auto=format&fit=crop&w=600&q=80'
-        },
-        {
-                title: 'Пошаговый план действий',
-                description:
-                        'Чёткий чек-лист первых месяцев работы: от открытия счёта до первых продаж.',
-                image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80'
-        },
-        {
-                title: 'Закрытое комьюнити таких же новичков',
-                description:
-                        'Общайтесь, делитесь опытом и находите партнёров в защищённом телеграм-канале.',
-                image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80'
-        },
-        {
-                title: 'Доступ к менторам и полезным сервисам',
-                description:
-                        'Рекомендации проверенных экспертов и сервисов, когда вы готовы идти глубже.',
-                image: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=600&q=80'
-        }
+	{
+		title: 'Всё о налогах и отчётности на одном языке',
+		description:
+			'Простые объяснения налоговых режимов, отчётности и обязательств без сложного жаргона.',
+		image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=600&q=80'
+	},
+	{
+		title: 'Пошаговый план действий',
+		description:
+			'Чёткий чек-лист первых месяцев работы: от открытия счёта до первых продаж.',
+		image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80'
+	},
+	{
+		title: 'Закрытое комьюнити таких же новичков',
+		description:
+			'Общайтесь, делитесь опытом и находите партнёров в защищённом телеграм-канале.',
+		image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80'
+	},
+	{
+		title: 'Доступ к менторам и полезным сервисам',
+		description:
+			'Рекомендации проверенных экспертов и сервисов, когда вы готовы идти глубже.',
+		image: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=600&q=80'
+	}
 ]
 
 const HowItWorksSection = () => {

@@ -7,30 +7,27 @@ import { motion } from 'framer-motion'
 import OrderModal from './OrderModal'
 
 const scenarios = [
-        {
-                title: 'Налоги и отчётность',
-                description:
-                        'Разбираемся с режимами, взносами и календарём обязательных отчётов.',
-                image: 'https://images.unsplash.com/photo-1581091215367-1a831416638b?auto=format&fit=crop&w=600&q=80'
-        },
-        {
-                title: 'План действий на первый месяц',
-                description:
-                        'Список задач, который поможет выйти на первые продажи.',
-                image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=80'
-        },
-        {
-                title: 'Первые клиенты',
-                description:
-                        'Проверенные способы найти заказчиков и запустить продажи.',
-                image: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=600&q=80'
-        },
-        {
-                title: 'Комьюнити и менторы',
-                description:
-                        'Чат с участниками и доступ к менторам, когда нужно больше.',
-                image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80'
-        }
+	{
+		title: 'Налоги и отчётность',
+		description:
+			'Разбираемся с режимами, взносами и календарём обязательных отчётов.',
+		image: 'https://images.unsplash.com/photo-1573497491208-6b1acb260507?auto=format&fit=crop&w=600&q=80'
+	},
+	{
+		title: 'План действий на первый месяц',
+		description: 'Список задач, который поможет выйти на первые продажи.',
+		image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=80'
+	},
+	{
+		title: 'Первые клиенты',
+		description: 'Проверенные способы найти заказчиков и запустить продажи.',
+		image: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=600&q=80'
+	},
+	{
+		title: 'Комьюнити и менторы',
+		description: 'Чат с участниками и доступ к менторам, когда нужно больше.',
+		image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80'
+	}
 ]
 
 const ScenariosSection = () => {
