@@ -7,30 +7,30 @@ import { motion } from 'framer-motion'
 import OrderModal from './OrderModal'
 
 const scenarios = [
-	{
-		title: 'Онбординг 101 (2-3\u00A0недели)',
-		description:
-			'Сценарий для новых сотрудников: знакомства, mini-кейсы, ретроспективы и общение с наставниками. Всё, что нужно для успешного\u00A0старта.',
-		image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80'
-	},
-	{
-		title: 'Кросс-функ «Анти-силос» (3-4\u00A0недели)',
-		description:
-			'Взаимодействие между различными департаментами, с учётом часовых зон и ролей. Это создаёт новые каналы общения и улучшает синергию между командами.',
-		image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80'
-	},
-	{
-		title: 'Экспресс-менторинг (4\u00A0недели)',
-		description:
-			'Менторство от более опытных коллег для развития сотрудников средней квалификации. Сценарий включает чек-листы и планы развития.',
-		image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=600&q=80'
-	},
-	{
-		title: 'Fan-игры & квизы (4\u00A0недели)',
-		description:
-			'Весёлые и познавательные активности, такие как квизы и ice-breakers, для создания атмосферы дружбы и командного духа.',
-		image: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=600&q=80'
-	}
+        {
+                title: 'Налоги и отчётность',
+                description:
+                        'Разбираемся с режимами, взносами и календарём обязательных отчётов.',
+                image: 'https://images.unsplash.com/photo-1581091215367-1a831416638b?auto=format&fit=crop&w=600&q=80'
+        },
+        {
+                title: 'План действий на первый месяц',
+                description:
+                        'Список задач, который поможет выйти на первые продажи.',
+                image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=80'
+        },
+        {
+                title: 'Первые клиенты',
+                description:
+                        'Проверенные способы найти заказчиков и запустить продажи.',
+                image: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=600&q=80'
+        },
+        {
+                title: 'Комьюнити и менторы',
+                description:
+                        'Чат с участниками и доступ к менторам, когда нужно больше.',
+                image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80'
+        }
 ]
 
 const ScenariosSection = () => {
@@ -55,7 +55,7 @@ const ScenariosSection = () => {
         return (
                 <section className='py-16 bg-white'>
                         <div className='container mx-auto px-4 text-center'>
-                                <h2 className='text-3xl md:text-4xl font-bold mb-8'>Готовые сценарии</h2>
+                                <h2 className='text-3xl md:text-4xl font-bold mb-8'>Темы курса</h2>
                                 <div className='relative'>
                                         <div ref={sliderRef} className='keen-slider'>
                                                 {scenarios.map(({ title, description, image }, idx) => (
@@ -133,7 +133,7 @@ const ScenariosSection = () => {
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                 >
-                                        Выбрать сценарий
+                                        Присоединиться
                                 </motion.button>
                                 <OrderModal
                                         open={isModalOpen}

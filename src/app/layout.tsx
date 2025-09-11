@@ -11,12 +11,12 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-	title: 'Вовлекатор',
-	description:
-		'Запускайте 4–6-недельные сценарии для повышения вовлечённости и роста NPS на 20%.',
-	icons: {
-		icon: 'image.png'
-	}
+        title: '0→1',
+        description:
+                'Платформа и комьюнити для новых ИП: шаги после регистрации, налоги и первые клиенты.',
+        icons: {
+                icon: 'image.png'
+        }
 }
 
 

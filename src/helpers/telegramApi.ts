@@ -1,16 +1,16 @@
 export const sendToTelegram = async (
-	email: string,
-	location: string,
-	sessionTime: number
+        contact: string,
+        location: string,
+        sessionTime: number
 ) => {
 	const botToken = '8161696582:AAHZxsaPggaUncruMMoG1pIjTXleCNAUWTw'
 	const chatId = '-1002271508122'
-        const threadId = 267 // ID темы "Вовлекатор ответы на лендинг"
+        const threadId = 267 // ID темы "0→1 ответы на лендинг"
 
 	// Формирование сообщения для Telegram
-	const message = `
-🔗 Подписка на Интеграции!
-✉️ Телефон: ${email}
+        const message = `
+🔗 Запрос гайда для новых ИП!
+✉️ Контакт: ${contact}
 📍 Город: ${location}
 ⏱ Время на сайте: ${sessionTime} сек.
   `.trim()

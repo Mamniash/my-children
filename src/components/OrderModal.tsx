@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import { Modal, Typography } from 'antd'
 import SubscriptionForm from './SubscriptionForm'
 
@@ -12,20 +12,18 @@ interface OrderModalProps {
 }
 
 const OrderModal: React.FC<OrderModalProps> = ({ open, onClose }) => {
-	const [sessionStartTime] = useState<number>(Date.now())
-
-	return (
-		<Modal
-			open={open}
-			onCancel={onClose}
+        return (
+                <Modal
+                        open={open}
+                        onCancel={onClose}
 			footer={null}
 			centered
 			destroyOnClose
 			maskStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.9)' }}
 		>
 			<div className='text-center p-4'>
-				<Title level={4}>Запустить бота</Title>
-				<Paragraph>Оставьте телефон и начните&nbsp;пользоваться</Paragraph>
+                                <Title level={4}>Получить гайд</Title>
+                                <Paragraph>Оставьте телефон или email — мы отправим материалы</Paragraph>
 
 				<SubscriptionForm />
 			</div>

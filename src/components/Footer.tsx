@@ -9,8 +9,8 @@ const Footer = () => {
                 <footer className='bg-[var(--primary)] text-white py-8'>
                         <div className='container mx-auto px-4 text-center'>
                                 <p className='mb-4'>
-                                        Мы не читаем личные переписки. Сохраняем только служебную информацию и ответы на анкеты.
-                                        Интеграция с Teams/Slack/календарями по запросу.
+                                        Мы не передаём ваши контакты третьим лицам. Отправляя данные, вы
+                                        соглашаетесь с обработкой персональных данных.
                                 </p>
                                 <p className='text-sm text-gray-400'>© {currentYear}</p>
                         </div>
