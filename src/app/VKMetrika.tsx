@@ -3,12 +3,11 @@
 import Script from 'next/script'
 
 export const VKMetrika = () => (
-	<>
-		<Script
-			id='vk-metrika'
-			strategy='afterInteractive'
-			dangerouslySetInnerHTML={{
-				__html: `
+        <Script
+                id='vk-metrika'
+                strategy='beforeInteractive'
+                dangerouslySetInnerHTML={{
+                        __html: `
 var _tmr = window._tmr || (window._tmr = []);
 _tmr.push({id: "3692734", type: "pageView", start: (new Date()).getTime()});
 (function (d, w, id) {
@@ -19,18 +18,20 @@ _tmr.push({id: "3692734", type: "pageView", start: (new Date()).getTime()});
   if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); }
 })(document, window, "tmr-code");
         `
-			}}
-		/>
-		<noscript>
-			<div>
-				<img
-					src='https://top-fwz1.mail.ru/counter?id=3692734;js=na'
-					style={{ position: 'absolute', left: '-9999px' }}
-					alt='Top.Mail.Ru'
-				/>
-			</div>
-		</noscript>
-	</>
+                }}
+        />
+)
+
+export const VKMetrikaNoScript = () => (
+        <noscript>
+                <div>
+                        <img
+                                src='https://top-fwz1.mail.ru/counter?id=3692734;js=na'
+                                style={{ position: 'absolute', left: '-9999px' }}
+                                alt='Top.Mail.Ru'
+                        />
+                </div>
+        </noscript>
 )
 
 export default VKMetrika
