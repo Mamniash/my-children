@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import AntdProvider from "./AntdRegistry";
-import { VKMetrika } from './VKMetrika'
+import { VKMetrika, VKMetrikaNoScript } from './VKMetrika'
 
 const poppins = Poppins({
   subsets: ["latin-ext"],
@@ -26,11 +26,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-		<html lang='ru'>
-			<body className={poppins.className}>
+                <html lang='ru'>
+                        <head>
                                 <VKMetrika />
+                        </head>
+                        <body className={poppins.className}>
+                                <VKMetrikaNoScript />
                                 <AntdProvider>{children}</AntdProvider>
-			</body>
-		</html>
+                        </body>
+                </html>
   )
 }
