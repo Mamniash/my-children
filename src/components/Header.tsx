@@ -42,16 +42,16 @@ const Header = () => {
 					{/* Условная отрисовка кнопки "Подробнее" для мобильных устройств */}
 					{/* placeholder for additional actions */}
 
-					{/* Условная отрисовка текста на кнопке "Заказать" в зависимости от разрешения */}
-                                        <Button
-                                                className='py-4 sm:text-sm md:text-base lg:text-lg ml-3'
-                                                type='primary'
-                                                shape='round'
-                                                size='large'
-                                                onClick={() => setIsModalOpen(true)}
-                                        >
-                                                Получить гайд
-                                        </Button>
+                                       {/* Условная отрисовка текста на кнопке "Заказать" в зависимости от разрешения */}
+                                       <Button
+                                               className='px-4 py-2 text-sm sm:text-sm md:text-base lg:text-lg ml-0 sm:ml-3'
+                                               type='primary'
+                                               shape='round'
+                                               size={isMobile ? 'middle' : 'large'}
+                                               onClick={() => setIsModalOpen(true)}
+                                       >
+                                               Получить гайд
+                                       </Button>
 					<OrderModal
 						open={isModalOpen}
 						onClose={() => setIsModalOpen(false)}
