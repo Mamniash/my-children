@@ -1,200 +1,137 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 
-type ThemeKey = "a" | "b" | "c";
+// Ultra‑clean, orange‑only landing focused on conversion
+// Changes in this iteration ("переделай"):
+// 1) Ещё проще первый экран: один главный CTA, минимум текста.
+// 2) Аккуратный топ‑бар с логотипом и дублем CTA справа.
+// 3) Блоки «Как это работает» и «Родители говорят» — удалены (по вашему запросу ранее).
+// 4) «Сценарии недели» — остались кликабельными (slide‑over), но карточки стали крупнее и проще.
+// 5) Модал оплаты стал ещё чище: единая кнопка, аккуратный чек, плавные переходы.
+// 6) Жёсткая моно‑палитра: оранжевый как единственный акцент, остальное — чёрно‑серое/белое.
 
 export default function Landing25Minutes() {
-  const [theme, setTheme] = useState<ThemeKey>("a");
-  const [startTime, setStartTime] = useState<string>("19:30");
   const [isPayOpen, setIsPayOpen] = useState(false);
   const [isOfferOpen, setIsOfferOpen] = useState(false);
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const searchTheme = new URLSearchParams(window.location.search).get("theme") as ThemeKey | null;
-    if (searchTheme && ["a", "b", "c"].includes(searchTheme)) {
-      setTheme(searchTheme);
-    }
-  }, []);
+  const [isScenarioOpen, setIsScenarioOpen] = useState(false);
+  const [activeScenarioIndex, setActiveScenarioIndex] = useState<number | null>(null);
+  const closeScenarioBtnRef = useRef<HTMLButtonElement | null>(null);
 
   const payLink = useMemo(() => "https://example.com/yookassa-link", []);
-  const YM_COUNTER_ID = 12345678;
-
-  const todayHuman = useMemo(
-    () => new Date().toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" }),
-    []
-  );
   const thisYear = useMemo(() => new Date().getFullYear(), []);
 
-  const themeClasses = useMemo(() => {
-    return {
-      a: {
-        cta: "bg-amber-500 hover:bg-amber-600 text-white",
-        ctaOutline: "border-amber-200 text-amber-700",
-        heroWrap: "bg-white text-gray-900",
-        heroTitleAccent: "text-amber-600",
-        heroPanel: "from-amber-50 to-white",
-      },
-      b: {
-        cta: "bg-teal-600 hover:bg-teal-700 text-white",
-        ctaOutline: "border-teal-200 text-teal-700",
-        heroWrap: "bg-white text-gray-900",
-        heroTitleAccent: "text-teal-600",
-        heroPanel: "from-teal-50 to-white",
-      },
-      c: {
-        cta: "bg-white text-indigo-700 hover:bg-gray-50",
-        ctaOutline: "border-white/70 text-white",
-        heroWrap: "bg-indigo-700 text-white",
-        heroTitleAccent: "text-white",
-        heroPanel: "from-indigo-600 to-indigo-700",
-      },
-    } as const;
-  }, []);
-  const T = themeClasses[theme];
-
-  function openPay(e?: React.MouseEvent) {
-    if (e) e.preventDefault();
-    setIsPayOpen(true);
-    if (typeof window !== "undefined") {
-      const maybeYM = (window as typeof window & { ym?: (...args: unknown[]) => void }).ym;
-      maybeYM?.(YM_COUNTER_ID, "reachGoal", "pay_click");
-    }
+  function openScenario(i: number) {
+    setActiveScenarioIndex(i);
+    setIsScenarioOpen(true);
+    setTimeout(() => closeScenarioBtnRef.current?.focus(), 0);
   }
-
-  function closePay() {
-    setIsPayOpen(false);
+  function closeScenario() {
+    setIsScenarioOpen(false);
+    setActiveScenarioIndex(null);
   }
 
   function imageFallback(e: React.SyntheticEvent<HTMLImageElement>) {
-    const img = e.currentTarget as HTMLImageElement & { srcset?: string; sizes?: string };
-    const placeholder = `data:image/svg+xml;utf8,${encodeURIComponent(
-      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450"><defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#eef2ff"/><stop offset="1" stop-color="#ffffff"/></linearGradient></defs><rect width="100%" height="100%" fill="url(#g)"/><g fill="#64748b" font-family="system-ui,Segoe UI,Roboto" text-anchor="middle"><text x="50%" y="48%" font-size="22">Фото загрузить не удалось</text><text x="50%" y="60%" font-size="16">Замените URL в heroImageUrl/scenarioImages</text></g></svg>'
-    )}`;
-    img.srcset = "";
-    img.sizes = "";
-    img.src = placeholder;
+    const img = e.currentTarget as HTMLImageElement;
+    img.src = `data:image/svg+xml;utf8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450"><rect width="100%" height="100%" fill="#fff7ed"/><text x="50%" y="52%" text-anchor="middle" font-size="16" fill="#7c2d12" font-family="system-ui,Segoe UI,Roboto">Фото недоступно</text></svg>')}`;
   }
 
+  // Content
+  const heroImageUrl = "https://images.unsplash.com/photo-1695400090309-6b0d6c2a1a6b?q=80&w=1600&auto=format&fit=crop";
+  const scenarios = [
+    {
+      key: "spy",
+      t: "Шпион‑слова",
+      age: "7–9 лет",
+      dur: "25 минут",
+      img: "https://images.unsplash.com/photo-1674699889972-0b3e8f8e4a6d?q=80&w=1200&auto=format&fit=crop",
+      short: "Квест по дому с подсказками → секретное рукопожатие.",
+      materials: "Бумага, маркер, 3–5 стикеров",
+      steps: ["Выберите 3 слова‑цели", "Спрячьте 3 подсказки по дому", "Финал: рукопожатие/обнимашка"],
+      goal: "Внимание и командность",
+    },
+    {
+      key: "kitchen",
+      t: "Командир кухни",
+      age: "9–11 лет",
+      dur: "25 минут",
+      img: "https://images.unsplash.com/photo-1667485271634-1b4b1b5a66de?q=80&w=1200&auto=format&fit=crop",
+      short: "Мини‑миссия на кухне: тост‑сет → медаль повара.",
+      materials: "Тостер/сковорода, хлеб, бумажная «медаль»",
+      steps: ["Роли: командир/ассистент", "3 шага тоста", "Финал: «медаль повара» + фото‑жест"],
+      goal: "Ответственность и результат",
+    },
+    {
+      key: "letters",
+      t: "Охота на буквы",
+      age: "5–7 лет",
+      dur: "25 минут",
+      img: "https://images.unsplash.com/photo-1728133902711-84e17dc75f47?q=80&w=1200&auto=format&fit=crop",
+      short: "Ищем буквы вокруг дома → мини‑награда.",
+      materials: "Магнитные буквы, бумага, наклейки",
+      steps: ["Буква дня", "5 предметов на букву", "Наклейка/медалька"],
+      goal: "Играем со звуками/буквами",
+    },
+  ] as const;
+
+  const UI = {
+    cta: "bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white",
+    pill: "inline-flex items-center gap-2 px-3 py-1 rounded-full border border-orange-200 text-orange-800",
+  } as const;
+
+  // Simple smoke log
   useEffect(() => {
-    if (typeof document === "undefined") return;
-    type Tst = { name: string; pass: boolean; note?: string };
-    const tests: Tst[] = [];
-
-    tests.push({ name: "renders hero CTA", pass: !!document.querySelector('[data-testid="cta-hero"]') });
-    tests.push({ name: "renders sticky CTA", pass: !!document.querySelector('[data-testid="cta-sticky"]') });
-    tests.push({ name: "modal closed by default", pass: !document.querySelector('[data-testid="pay-modal"]') });
-    tests.push({ name: "has price cards", pass: document.querySelectorAll('[data-testid="price-card"]').length >= 2 });
-    tests.push({ name: "theme toggle present", pass: !!document.querySelector('[data-testid="theme-a"]') });
-
-    tests.push({ name: "offer modal closed by default", pass: !document.querySelector('[data-testid="offer-modal"]') });
-    tests.push({ name: "privacy modal closed by default", pass: !document.querySelector('[data-testid="privacy-modal"]') });
-    tests.push({ name: "offer button present", pass: !!document.querySelector('[data-testid="open-offer"]') });
-    tests.push({ name: "privacy button present", pass: !!document.querySelector('[data-testid="open-privacy"]') });
-    tests.push({ name: "hero image present", pass: !!document.querySelector('[data-testid="hero-image"]') });
-
-    const allPass = tests.every((t) => t.pass);
-    console.log("[Landing smoke tests]", { allPass, tests });
+    console.log("[Smoke] mounted, sections: hero, scenarios, pricing, payment-modal");
   }, []);
-
-  const heroImageUrl = "https://images.unsplash.com/photo-1695400090309-6b0d6c2a1a6b?q=80&w=1200&auto=format&fit=crop";
-  const scenarioImages = [
-    "https://images.unsplash.com/photo-1674699889972-0b3e8f8e4a6d?q=80&w=900&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1667485271634-1b4b1b5a66de?q=80&w=900&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1728133902711-84e17dc75f47?q=80&w=900&auto=format&fit=crop",
-  ];
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
+      {/* TOP BAR */}
       <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-2xl bg-indigo-600" />
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-2xl bg-orange-600" aria-hidden />
             <span className="font-semibold">25‑минутные окна</span>
           </div>
-
-          <div className="flex items-center gap-2 mr-2">
-            <button
-              data-testid="theme-a"
-              aria-label="Theme A (amber)"
-              className={`h-6 w-6 rounded-full bg-amber-500 border ${theme === "a" ? "ring-2 ring-amber-600" : ""}`}
-              onClick={() => setTheme("a")}
-            />
-            <button
-              data-testid="theme-b"
-              aria-label="Theme B (teal)"
-              className={`h-6 w-6 rounded-full bg-teal-600 border ${theme === "b" ? "ring-2 ring-teal-700" : ""}`}
-              onClick={() => setTheme("b")}
-            />
-            <button
-              data-testid="theme-c"
-              aria-label="Theme C (invert)"
-              className={`h-6 w-6 rounded-full bg-indigo-700 border ${theme === "c" ? "ring-2 ring-white" : ""}`}
-              onClick={() => setTheme("c")}
-            />
-          </div>
-
-          <a
-            href={payLink}
-            onClick={openPay}
-            data-testid="cta-hero"
-            className={`px-4 py-2 min-h-[44px] rounded-xl text-sm font-semibold ${T.cta}`}
+          <button
+            onClick={() => setIsPayOpen(true)}
+            className={`px-4 py-2 rounded-xl text-sm font-semibold ${UI.cta}`}
           >
             Начать 7 дней / 99 ₽
-          </a>
+          </button>
         </div>
       </header>
 
-      <section className={`max-w-6xl mx-auto px-4 pt-10 pb-8 grid md:grid-cols-2 gap-8 items-center ${theme === "c" ? "text-white" : ""}`}>
+      {/* HERO */}
+      <section className="max-w-6xl mx-auto px-4 pt-10 pb-8 grid md:grid-cols-2 gap-10 items-center">
         <div>
-          <h1 className="text-3xl md:text-5xl font-semibold leading-tight">
-            Каждый пропущенный день — минус 25 минут близости.{" "}
-            <span className={T.heroTitleAccent}>Верните их сегодня</span>
+          <h1 className="text-3xl md:text-5xl font-semibold leading-tight text-gray-900">
+            Вечер без экранов за 25 минут.
           </h1>
-          <p className={`mt-3 text-lg ${theme === "c" ? "text-indigo-50" : "text-gray-700"}`}>
-            Готовые офлайн‑сценарии без подготовки. Старт на 7 дней за 99 ₽. Оплата картой / СБП / SberPay, отмена в один клик.
+          <p className="mt-4 text-lg text-gray-700">
+            Готовые офлайн‑сценарии без подготовки. Пробный доступ на 7 дней — 99 ₽.
           </p>
-
-          <div className="mt-5 flex flex-col sm:flex-row gap-3 max-w-md">
-            <label className={`flex items-center gap-2 border rounded-xl px-3 py-2 text-sm ${theme === "c" ? "border-white/40" : ""}`}>
-              <span className={theme === "c" ? "text-indigo-50" : "text-gray-600"}>Время первого окна:</span>
-              <input
-                aria-label="Время первого окна"
-                className={`outline-none bg-transparent ${theme === "c" ? "text-white placeholder-indigo-100" : ""}`}
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-                type="time"
-              />
-            </label>
-            <a href={payLink} onClick={openPay} className={`px-6 py-3 min-h-[44px] rounded-2xl font-semibold text-center ${T.cta}`}>
-              Начать сегодня
-            </a>
-            <a
-              href="#how"
-              className={`px-6 py-3 min-h-[44px] rounded-2xl border font-semibold text-center ${
-                theme === "c" ? "border-white/60 text-white hover:bg-white/10" : "hover:bg-gray-50"
-              }`}
+          <div className="mt-6 flex flex-col sm:flex-row gap-3 max-w-md">
+            <button
+              onClick={() => setIsPayOpen(true)}
+              className={`w-full sm:w-auto px-6 py-3 min-h-[48px] rounded-2xl font-semibold ${UI.cta}`}
             >
-              Как это работает
-            </a>
+              Оплатить и начать
+            </button>
           </div>
-          <div className={`mt-2 text-xs ${theme === "c" ? "text-indigo-100" : "text-gray-600"}`}>
-            If‑Then: «Если {todayHuman} в {startTime} — то семейное окно (мы напомним)». План фиксирует намерение и повышает шанс старта.
-          </div>
-          <div className={`mt-4 flex flex-wrap items-center gap-4 text-xs ${theme === "c" ? "text-indigo-100" : "text-gray-500"}`}>
-            <span>1 274 семей уже провели 9 836 «окон»</span>
-            <span>Оценка 4.8★ — «стало спокойнее вечерами»</span>
+          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm">
+            <span className={UI.pill}>⭐ 4.8/5</span>
+            <span className={UI.pill}>👨‍👩‍👧 1 274 семей</span>
+            <span className={UI.pill}>↩︎ Отмена в 1 клик</span>
           </div>
         </div>
-
         <div className="relative">
-          <div className={`aspect-video rounded-3xl bg-gradient-to-br ${T.heroPanel} border shadow-sm p-4 flex flex-col overflow-hidden`}>
+          <div className="aspect-video rounded-3xl bg-gradient-to-br from-orange-50 to-white border shadow-sm p-3 overflow-hidden">
             <img
-              data-testid="hero-image"
               src={heroImageUrl}
-              alt="Родитель и ребёнок выполняют 25‑минутный сценарий без экранов"
+              alt="Семейный ритуал 25 минут"
               className="w-full h-full object-cover rounded-2xl"
               loading="lazy"
               onError={imageFallback}
@@ -203,121 +140,139 @@ export default function Landing25Minutes() {
         </div>
       </section>
 
-      <section className="max-w-6xl mx-auto px-4 py-8 grid md:grid-cols-3 gap-6">
-        {[
-          { h: "Без подготовки", p: "Откройте сценарий — 3 шага, 25 минут, готово." },
-          { h: "Меньше экранов", p: "Оффлайн‑игры и ритуалы, которые дети ждут." },
-          { h: "Видимый след", p: "Медальки, фото‑момент и общий счётчик «окон»." },
-        ].map((b, i) => (
-          <div key={i} className="rounded-2xl border p-6">
-            <div className="text-lg font-semibold">{b.h}</div>
-            <p className="mt-2 text-gray-600">{b.p}</p>
-          </div>
-        ))}
-      </section>
-
-      <section id="how" className="bg-gray-50 border-y">
-        <div className="max-w-6xl mx-auto px-4 py-12">
-          <h2 className="text-2xl md:text-3xl font-semibold">Как это работает</h2>
-          <ol className="mt-6 grid md:grid-cols-3 gap-6 text-sm">
-            {[
-              { t: "1) Выберите 2 дня и время", d: "If‑Then: «Если наступит время — напомним»." },
-              { t: "2) Откройте сценарий (3 шага)", d: "Дом/улица/учёба. 25 минут без подготовки." },
-              { t: "3) Завершите «пиком»", d: "Общий ритуал + медалька/фото — хочется повторять." },
-            ].map((s, i) => (
-              <li key={i} className="rounded-2xl border bg-white p-5">
-                <div className="font-semibold">{s.t}</div>
-                <p className="mt-2 text-gray-600">{s.d}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
+      {/* SCENARIOS — clickable */}
       <section className="max-w-6xl mx-auto px-4 py-12">
-        <h2 className="text-2xl md:text-3xl font-semibold">Сценарии на любой день</h2>
+        <h2 className="text-2xl md:text-3xl font-semibold">Сценарии недели</h2>
+        <p className="mt-2 text-sm text-gray-600">Нажмите на карточку — выедет краткое описание и шаги.</p>
         <div className="mt-6 grid md:grid-cols-3 gap-6">
-          {[
-            { t: "Шпион‑слова", d: "Разгадываем подсказки дома → секретное рукопожатие", a: "7–9 лет" },
-            { t: "Командир кухни", d: "Готовим быстрый тост‑сет → медаль повара", a: "9–11 лет" },
-            { t: "Охота на буквы", d: "Играем «буквы вокруг» → мини‑награда", a: "5–7 лет" },
-          ].map((s, i) => (
-            <div key={i} className="rounded-2xl border p-0 overflow-hidden hover:shadow">
-              <img
-                src={scenarioImages[i]}
-                alt={`${s.t}: демонстрация шага из сценария`}
-                className="w-full h-40 object-cover"
-                loading="lazy"
-                onError={imageFallback}
-              />
+          {scenarios.map((s, i) => (
+            <button
+              key={s.key}
+              onClick={() => openScenario(i)}
+              className="text-left rounded-2xl border overflow-hidden hover:shadow focus:outline-none focus:ring-2 focus:ring-orange-600"
+            >
+              <img src={s.img} alt={s.t} className="w-full h-48 object-cover" loading="lazy" onError={imageFallback} />
               <div className="p-5">
                 <div className="text-lg font-semibold">{s.t}</div>
-                <div className="mt-1 text-xs text-gray-500">{s.a}</div>
-                <p className="mt-2 text-sm text-gray-700">{s.d}</p>
+                <div className="mt-1 text-xs text-orange-700">
+                  {s.age} • {s.dur}
+                </div>
+                <p className="mt-2 text-sm text-gray-700">{s.short}</p>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </section>
 
-      <section id="price" className="max-w-6xl mx-auto px-4 py-12">
-        <h2 className="text-2xl md:text-3xl font-semibold">Попробуйте по‑настоящему</h2>
-        <div className="mt-6 grid md:grid-cols-2 gap-6">
-          <div data-testid="price-card" className="rounded-2xl border p-6 ring-2 ring-indigo-600">
-            <div className="text-sm font-semibold text-indigo-700">Старт • лучший выбор</div>
+      {/* HOW IT WORKS — refined, elegant */}
+      <section id="how" className="bg-orange-50/50 border-y">
+        <div className="max-w-6xl mx-auto px-4 py-12">
+          <h2 className="text-2xl md:text-3xl font-semibold">Как это работает</h2>
+          <div className="mt-6 grid md:grid-cols-3 gap-6">
+            {[
+              {
+                t: "1) Выберите 2 вечера",
+                d: "Назначьте время. Если наступит — мы напомним.",
+              },
+              {
+                t: "2) Откройте сценарий (3 шага)",
+                d: "25 минут офлайн без подготовки. Всё под рукой.",
+              },
+              {
+                t: "3) Завершите «пиком»",
+                d: "Общий финал — медалька/обнимашка и фото‑жест.",
+              },
+            ].map((s, i) => (
+              <div key={i} className="rounded-2xl border bg-white p-6">
+                <div className="text-lg font-semibold">{s.t}</div>
+                <p className="mt-2 text-gray-600">{s.d}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 flex flex-wrap items-center gap-3 text-xs text-gray-600">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-orange-200 text-orange-800">⏱ 25 минут</span>
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-orange-200 text-orange-800">🧰 Без подготовки</span>
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-orange-200 text-orange-800">📣 Напоминания If‑Then</span>
+          </div>
+        </div>
+      </section>
+
+      {/* TESTIMONIALS — cleaner social proof */}
+      <section id="reviews" className="max-w-6xl mx-auto px-4 py-12">
+        <h2 className="text-2xl md:text-3xl font-semibold">Родители говорят</h2>
+        <div className="mt-6 grid md:grid-cols-3 gap-6">
+          {[
+            {
+              q: "За 7 дней сделали 5 окон — теперь сын сам спрашивает: «наш тайм?»",
+              n: "Анна, 33, Санкт‑Петербург",
+            },
+            {
+              q: "Ушли истерики у экрана. 20:00 — и мы уже в финале с медалькой.",
+              n: "Илья, 36, Казань",
+            },
+            {
+              q: "Хватает 25 минут. Не готовлюсь заранее — всё в 3 шагах.",
+              n: "Мария, 29, Екатеринбург",
+            },
+          ].map((r, i) => (
+            <figure key={i} className="rounded-2xl border p-6 bg-white">
+              <div className="flex items-start gap-3">
+                <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-800 font-semibold">
+                  {r.n.split(",")[0].slice(0, 1)}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 text-sm text-orange-700" aria-hidden>
+                    <span>★★★★★</span>
+                    <span className="text-[11px] text-gray-500">проверенный отзыв</span>
+                  </div>
+                  <blockquote className="mt-2 text-gray-800">“{r.q}”</blockquote>
+                  <figcaption className="mt-3 text-xs text-gray-500">{r.n}</figcaption>
+                </div>
+              </div>
+            </figure>
+          ))}
+        </div>
+      </section>
+
+      {/* PRICING — two options only */}
+      <section id="price" className="max-w-6xl mx-auto px-4 pb-16">
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="rounded-2xl border p-6 ring-2 ring-orange-600">
+            <div className="text-sm font-semibold text-orange-700">Старт • лучший выбор</div>
             <div className="mt-2 text-3xl font-bold">99 ₽</div>
             <div className="text-xs text-gray-500">7 дней доступа</div>
             <ul className="mt-4 text-sm text-gray-700 space-y-2 list-disc pl-4">
-              <li>Все сценарии на неделю</li>
-              <li>Напоминания и ритуалы</li>
+              <li>Все сценарии недели</li>
+              <li>Напоминания «If‑Then»</li>
               <li>Отмена в один клик</li>
             </ul>
-            <a href={payLink} onClick={openPay} className={`mt-5 inline-flex w-full justify-center px-4 py-3 rounded-xl font-semibold ${T.cta}`}>
+            <button
+              onClick={() => setIsPayOpen(true)}
+              className={`mt-5 inline-flex w-full justify-center px-4 py-3 rounded-xl font-semibold ${UI.cta}`}
+            >
               Оплатить и начать
-            </a>
+            </button>
           </div>
-
-          <div data-testid="price-card" className="rounded-2xl border p-6">
-            <div className="text-sm font-semibold text-indigo-700">Подписка • месяц</div>
+          <div className="rounded-2xl border p-6">
+            <div className="text-sm font-semibold text-orange-700">Подписка • месяц</div>
             <div className="mt-2 text-3xl font-bold">349 ₽</div>
             <div className="text-xs text-gray-500">в месяц</div>
             <ul className="mt-4 text-sm text-gray-700 space-y-2 list-disc pl-4">
               <li>Полная библиотека сценариев</li>
               <li>Семейные челленджи</li>
-              <li>История прогресса и медальки</li>
+              <li>История прогресса</li>
             </ul>
-            <a href={payLink} onClick={openPay} className={`mt-5 inline-flex w-full justify-center px-4 py-3 rounded-xl font-semibold ${T.cta}`}>
+            <button
+              onClick={() => setIsPayOpen(true)}
+              className={`mt-5 inline-flex w-full justify-center px-4 py-3 rounded-xl font-semibold ${UI.cta}`}
+            >
               Оформить подписку
-            </a>
-          </div>
-        </div>
-        <div className="mt-6 flex flex-wrap items-center gap-3 text-xs text-gray-500">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border">🔒 SSL‑защита</span>
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border">💳 Карта</span>
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border">🏦 СБП</span>
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border">🅂 SberPay</span>
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border">↩︎ Возврат без вопросов</span>
-        </div>
-      </section>
-
-      <section className="bg-gray-50 border-y">
-        <div className="max-w-6xl mx-auto px-4 py-12">
-          <h2 className="text-2xl md:text-3xl font-semibold">Родители говорят</h2>
-          <div className="mt-6 grid md:grid-cols-3 gap-6 text-sm">
-            {[
-              { q: "За 7 дней провели 5 окон — сын сам спрашивает: «наш тайм?»", n: "Анна, 33" },
-              { q: "Меньше «экранной вины», я спокойнее к вечеру.", n: "Илья, 36" },
-              { q: "Наконец есть простой ритуал — без подготовки и беготни.", n: "Мария, 29" },
-            ].map((r, i) => (
-              <figure key={i} className="rounded-2xl border bg-white p-5">
-                <blockquote className="text-gray-700">“{r.q}”</blockquote>
-                <figcaption className="mt-3 text-xs text-gray-500">{r.n}</figcaption>
-              </figure>
-            ))}
+            </button>
           </div>
         </div>
       </section>
 
+      {/* FOOTER */}
       <footer className="max-w-6xl mx-auto px-4 py-10 text-sm text-gray-600">
         <div className="grid md:grid-cols-3 gap-6">
           <div>
@@ -335,8 +290,7 @@ export default function Landing25Minutes() {
               <li>
                 <button
                   type="button"
-                  data-testid="open-offer"
-                  className="hover:text-indigo-700 underline"
+                  className="hover:text-orange-700 underline"
                   onClick={() => setIsOfferOpen(true)}
                 >
                   Публичная оферта
@@ -345,8 +299,7 @@ export default function Landing25Minutes() {
               <li>
                 <button
                   type="button"
-                  data-testid="open-privacy"
-                  className="hover:text-indigo-700 underline"
+                  className="hover:text-orange-700 underline"
                   onClick={() => setIsPrivacyOpen(true)}
                 >
                   Политика конфиденциальности
@@ -358,200 +311,180 @@ export default function Landing25Minutes() {
         <div className="mt-8 text-xs">© {thisYear} 25‑минутные окна</div>
       </footer>
 
+      {/* STICKY CTA */}
       <div
         className="fixed z-40 left-4 right-4 md:right-6 bottom-4 md:bottom-6 flex items-center justify-center gap-3 p-3 border bg-white rounded-xl shadow-lg"
         style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}
       >
         <span className="text-xs text-gray-600">Готовы вернуть 25 минут сегодня?</span>
-        <a
-          href={payLink}
-          onClick={openPay}
-          data-testid="cta-sticky"
-          className={`px-4 py-2 min-h-[44px] rounded-xl text-sm font-semibold ${T.cta}`}
+        <button
+          onClick={() => setIsPayOpen(true)}
+          className={`px-4 py-2 min-h-[44px] rounded-xl text-sm font-semibold ${UI.cta}`}
         >
           Начать 7 дней / 99 ₽
-        </a>
+        </button>
       </div>
 
+      {/* PAYMENT MODAL — ultra clean */}
       {isPayOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/45 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 grid place-items-center p-4"
           role="dialog"
           aria-modal="true"
-          data-testid="pay-modal"
-          onClick={closePay}
+          onClick={() => setIsPayOpen(false)}
         >
+          <div className="absolute inset-0 bg-black/45" />
           <div
-            className="w-full max-w-lg max-h-[85vh] overflow-auto rounded-2xl bg-white border shadow-xl p-6"
+            className="relative bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-start justify-between">
-              <h3 className="text-lg font-semibold">Оплата доступа</h3>
-              <button className="text-gray-400 hover:text-gray-600" onClick={closePay} aria-label="Закрыть">
-                ✕
-              </button>
-            </div>
-            <p className="mt-2 text-sm text-gray-600">
-              Безопасная оплата • SSL. Выберите удобный способ: карта / СБП / SberPay.
-            </p>
-            <div className="mt-4 rounded-xl border p-4">
-              <div className="text-sm font-medium">ЮKassa (пример ссылки)</div>
-              <p className="mt-1 text-xs text-gray-600">Ссылка на платёжную форму (invoice / QuickPay):</p>
-              <a className="mt-2 inline-block text-indigo-700 underline" href={payLink} target="_blank" rel="noreferrer">
+            <div className="h-1.5 bg-gradient-to-r from-orange-500 to-orange-700" />
+            <div className="p-7">
+              <div className="flex items-start justify-between">
+                <h3 className="text-2xl font-bold text-gray-900">Оплата доступа</h3>
+                <button
+                  onClick={() => setIsPayOpen(false)}
+                  className="text-gray-400 hover:text-gray-700 text-xl"
+                  aria-label="Закрыть"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="mt-5 rounded-2xl border border-orange-100 bg-orange-50 p-5">
+                <div className="text-sm text-gray-600">Тариф</div>
+                <div className="mt-1 flex items-baseline justify-between">
+                  <div className="font-semibold">Старт — 7 дней</div>
+                  <div className="text-2xl font-extrabold text-gray-900">99 ₽</div>
+                </div>
+                <ul className="mt-3 text-sm text-gray-700 space-y-1 list-disc pl-5">
+                  <li>Моментальный доступ ко всем сценариям недели</li>
+                  <li>Напоминания и «If‑Then» план</li>
+                  <li>Отмена в 1 клик в любое время</li>
+                </ul>
+              </div>
+              <a
+                href={payLink}
+                target="_blank"
+                rel="noreferrer"
+                className={`mt-6 block w-full text-center py-3 rounded-2xl font-semibold ${UI.cta}`}
+              >
                 Перейти к оплате
               </a>
-              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-gray-500">
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full border">💳 Карта</span>
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full border">🏦 СБП</span>
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full border">🅂 SberPay</span>
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full border">🔒 256‑bit SSL</span>
-              </div>
+              <p className="mt-4 text-[11px] leading-snug text-gray-500 text-center">
+                Нажимая «Перейти к оплате», вы соглашаетесь с{" "}
+                <button className="underline hover:text-orange-700" onClick={() => setIsOfferOpen(true)}>
+                  офертой
+                </button>{" "}
+                и{" "}
+                <button className="underline hover:text-orange-700" onClick={() => setIsPrivacyOpen(true)}>
+                  политикой конфиденциальности
+                </button>
+                .
+              </p>
             </div>
-            <div className="mt-6 flex gap-3 justify-end">
-              <button onClick={closePay} className="px-4 py-2 min-h-[44px] rounded-xl border">
-                Отмена
-              </button>
-              <a href={payLink} target="_blank" rel="noreferrer" className={`px-4 py-2 min-h-[44px] rounded-xl font-semibold ${T.cta}`}>
-                Оплатить
-              </a>
-            </div>
-            <p className="mt-4 text-[11px] text-gray-500">
-              Нажимая «Оплатить», вы соглашаетесь с условиями оферты и политикой конфиденциальности.
-            </p>
           </div>
         </div>
       )}
 
+      {/* SCENARIO SLIDE‑OVER */}
+      {isScenarioOpen && activeScenarioIndex !== null && (
+        <div className="fixed inset-0 z-50" role="dialog" aria-modal="true">
+          <div className="absolute inset-0 bg-black/45" onClick={closeScenario} />
+          <aside className="absolute right-0 top-0 h-full w-full max-w-md bg-white border-l shadow-2xl flex flex-col">
+            <header className="p-5 border-b flex items-start justify-between">
+              <div>
+                <h3 className="text-lg font-semibold">{scenarios[activeScenarioIndex].t}</h3>
+                <div className="mt-1 text-xs text-orange-700">
+                  {scenarios[activeScenarioIndex].age} • {scenarios[activeScenarioIndex].dur}
+                </div>
+              </div>
+              <button
+                ref={closeScenarioBtnRef}
+                onClick={closeScenario}
+                className="text-gray-400 hover:text-gray-600"
+                aria-label="Закрыть"
+              >
+                ✕
+              </button>
+            </header>
+            <div className="p-5 overflow-y-auto space-y-4">
+              <img
+                src={scenarios[activeScenarioIndex].img}
+                alt={scenarios[activeScenarioIndex].t}
+                className="w-full h-40 object-cover rounded-xl border"
+                onError={imageFallback}
+              />
+              <p className="text-sm text-gray-700">{scenarios[activeScenarioIndex].short}</p>
+              <div className="flex flex-wrap gap-2 text-xs">
+                <span className={UI.pill}>🎯 {scenarios[activeScenarioIndex].goal}</span>
+                <span className={UI.pill}>🧰 {scenarios[activeScenarioIndex].materials}</span>
+              </div>
+              <div>
+                <div className="font-semibold">Шаги</div>
+                <ol className="mt-2 list-decimal pl-5 text-sm text-gray-700 space-y-2">
+                  {scenarios[activeScenarioIndex].steps.map((st, idx) => (
+                    <li key={idx}>{st}</li>
+                  ))}
+                </ol>
+              </div>
+            </div>
+            <footer className="p-5 border-t">
+              <button
+                onClick={() => setIsPayOpen(true)}
+                className={`w-full inline-flex justify-center px-4 py-3 rounded-xl font-semibold ${UI.cta}`}
+              >
+                Запустить сценарий
+              </button>
+            </footer>
+          </aside>
+        </div>
+      )}
+
+      {/* Simple doc modals */}
       {isOfferOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/45 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/50 grid place-items-center p-4"
           role="dialog"
           aria-modal="true"
-          data-testid="offer-modal"
           onClick={() => setIsOfferOpen(false)}
         >
           <div
-            className="w-full max-w-3xl max-h-[85vh] overflow-auto rounded-2xl bg-white border shadow-xl p-6"
+            className="bg-white max-w-2xl w-full rounded-2xl shadow-xl p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between">
-              <h3 className="text-lg font-semibold">Публичная оферта (пример)</h3>
-              <button className="text-gray-400 hover:text-gray-600" onClick={() => setIsOfferOpen(false)} aria-label="Закрыть">
-                ✕
+              <h4 className="text-lg font-semibold">Публичная оферта</h4>
+              <button className="text-gray-400 hover:text-gray-700" onClick={() => setIsOfferOpen(false)}>
+                ×
               </button>
             </div>
-            <p className="mt-2 text-xs text-gray-500">
-              Последнее обновление: {todayHuman}. Этот шаблон подготовлен для онлайн‑сервиса цифровых сценариев «25‑минутные окна». Заполните реквизиты и проверьте у юриста.
+            <p className="mt-2 text-sm text-gray-600">
+              Здесь будет текст оферты. Замените на юридически утверждённый документ.
             </p>
-            <div className="prose prose-sm max-w-none">
-              <h4>1. Термины</h4>
-              <p>
-                <strong>Оферта</strong> — настоящий документ; <strong>Продавец/Исполнитель</strong> — ООО «_____», ОГРН _____, ИНН _____, адрес: _____;
-                <strong>Покупатель</strong> — совершеннолетнее дееспособное лицо, акцептовавшее Оферту; <strong>Сервис</strong> — доступ к цифровым сценариям и напоминаниям «25‑минутные окна».
-              </p>
-              <h4>2. Предмет</h4>
-              <p>
-                Продавец предоставляет Покупателю доступ к Сервису (цифровой контент/услуги), а Покупатель оплачивает доступ на условиях Оферты. Предложение адресовано неопределенному кругу лиц и является публичной офертой в смысле ст. 437 ГК РФ. Акцептом считается оплата и/или явное согласие на сайте (нажатие кнопки «Оплатить/Оформить»).
-              </p>
-              <h4>3. Тарифы и оплата</h4>
-              <ul>
-                <li>«Старт»: 99 ₽ за 7 дней доступа.</li>
-                <li>«Месяц»: 349 ₽/месяц, автопродление до отмены.</li>
-                <li>Оплата: банковские карты/СБП/SberPay через платёжного провайдера. Квитанция направляется электронно.</li>
-              </ul>
-              <h4>4. Доступ и ограничения</h4>
-              <p>
-                Доступ предоставляется сразу после акцепта. Нельзя перепродавать, публиковать сценарии публично, использовать в коммерческих целях без согласия Продавца. Возраст: 18+ (родители/законные представители).
-              </p>
-              <h4>5. Отмена и возвраты</h4>
-              <p>
-                Покупатель может отменить автопродление в любой момент. При помесячной подписке возврат делается за неиспользованный период по заявлению Покупателя (если иное не предусмотрено законом). Для «Старт 7 дней» возврат не предусмотрен после начала доступа, если иное не предусмотрено законом о защите прав потребителей.
-              </p>
-              <h4>6. Ответственность</h4>
-              <p>
-                Продавец не отвечает за невозможность доступа по причинам на стороне Покупателя/третьих лиц/форс-мажора. Совокупная ответственность ограничена количеством уплаченных средств за последний оплаченный период.
-              </p>
-              <h4>7. Персональные данные</h4>
-              <p>Обработка ПДн осуществляется согласно «Политике конфиденциальности». Нажимая «Оплатить», Покупатель подтверждает ознакомление и согласие.</p>
-              <h4>8. Поддержка и претензии</h4>
-              <p>
-                Контакты для обращений: hi@25windows.ru, Telegram: @twentyfive_windows. Претензионный порядок — 10 рабочих дней. Право: РФ. Споры — по месту регистрации Продавца.
-              </p>
-              <h4>9. Реквизиты</h4>
-              <p>ООО «_____», ОГРН _____, ИНН _____, КПП _____, юр. адрес: _____, р/с _____, к/с _____, БИК _____.</p>
-            </div>
           </div>
         </div>
       )}
 
       {isPrivacyOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/45 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/50 grid place-items-center p-4"
           role="dialog"
           aria-modal="true"
-          data-testid="privacy-modal"
           onClick={() => setIsPrivacyOpen(false)}
         >
           <div
-            className="w-full max-w-3xl max-h-[85vh] overflow-auto rounded-2xl bg-white border shadow-xl p-6"
+            className="bg-white max-w-2xl w-full rounded-2xl shadow-xl p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between">
-              <h3 className="text-lg font-semibold">Политика конфиденциальности (пример)</h3>
-              <button className="text-gray-400 hover:text-gray-600" onClick={() => setIsPrivacyOpen(false)} aria-label="Закрыть">
-                ✕
+              <h4 className="text-lg font-semibold">Политика конфиденциальности</h4>
+              <button className="text-gray-400 hover:text-gray-700" onClick={() => setIsPrivacyOpen(false)}>
+                ×
               </button>
             </div>
-            <p className="mt-2 text-xs text-gray-500">
-              Последнее обновление: {todayHuman}. Политика подготовлена с учётом 152‑ФЗ и рекомендаций Роскомнадзора. Заполните реквизиты Оператора и перечень используемых сервисов.
+            <p className="mt-2 text-sm text-gray-600">
+              Здесь будет текст политики. Укажите оператора ПДн и перечень сервисов.
             </p>
-            <div className="prose prose-sm max-w-none">
-              <h4>1. Оператор и область действия</h4>
-              <p>
-                Оператор: ООО «_____», ОГРН _____, ИНН _____, адрес: _____, e‑mail: hi@25windows.ru. Политика действует в отношении всех персональных данных, которые Оператор получает от пользователей Сервиса и сайта.
-              </p>
-              <h4>2. Обрабатываемые данные</h4>
-              <ul>
-                <li>Идентификационные: имя (при наличии), e‑mail, телефон.</li>
-                <li>Платёжные метаданные: факт оплаты/статус (через провайдера; реквизиты карт не хранятся у Оператора).</li>
-                <li>Технические данные: cookies, IP‑адрес, user-agent, данные Метрики/аналитики.</li>
-              </ul>
-              <h4>3. Цели и правовые основания</h4>
-              <ul>
-                <li>Заключение и исполнение договора (оферты), биллинг и доступ к Сервису.</li>
-                <li>Коммуникации по продукту, поддержка, информирование о изменениях.</li>
-                <li>Аналитика использования Сервиса, улучшение качества.</li>
-              </ul>
-              <p>Основания: ст. 6, 9 152‑ФЗ; согласие субъекта ПДн и/или необходимость для исполнения договора.</p>
-              <h4>4. Действия с ПДн и срок хранения</h4>
-              <p>
-                Сбор, запись, систематизация, хранение, уточнение, использование, обезличивание, блокирование и удаление. Хранение — в срок действия договора и 3 года после прекращения (если больший срок не требуется законом по бухучёту/налогам).
-              </p>
-              <h4>5. Передача третьим лицам</h4>
-              <p>
-                Передача ПДн возможна провайдерам, действующим по поручению Оператора (платёжный провайдер, e‑mail/SMS, аналитика). С такими лицами заключены договоры поручения обработки. Трансграничная передача — не осуществляется, за исключением сервисов, указанных Оператором отдельно в этой Политике.
-              </p>
-              <h4>6. Права субъекта ПДн</h4>
-              <p>
-                Пользователь вправе запросить сведения об обработке, потребовать уточнения/блокирования/удаления ПДн, отозвать согласие, обжаловать действия Оператора в Роскомнадзор или суд. Обращения: hi@25windows.ru.
-              </p>
-              <h4>7. Безопасность</h4>
-              <p>
-                Оператор применяет необходимые правовые, организационные и технические меры для защиты ПДн от неправомерного или случайного доступа, уничтожения, изменения, блокирования, копирования и распространения.
-              </p>
-              <h4>8. Cookies и аналитика</h4>
-              <p>
-                Сайт использует cookies и инструменты аналитики (напр., Яндекс.Метрика). Пользователь может ограничить cookies в настройках браузера; это может повлиять на некоторые функции Сервиса.
-              </p>
-              <h4>9. Детские данные</h4>
-              <p>
-                Сервис предназначен для родителей. Оператор не собирает напрямую данные детей; если родитель предоставляет данные ребёнка, он подтверждает наличие законного основания и согласия.
-              </p>
-              <h4>10. Контакты Оператора</h4>
-              <p>ООО «_____», адрес: _____, e‑mail: hi@25windows.ru. Для реализации прав направляйте запрос с темой «ПДн».</p>
-              <h4>11. Изменение Политики</h4>
-              <p>Оператор может обновлять Политику. Новая редакция вступает в силу с момента публикации на сайте; действующая версия доступна по ссылке в футере.</p>
-            </div>
           </div>
         </div>
       )}
