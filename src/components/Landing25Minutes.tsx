@@ -20,6 +20,43 @@ export default function Landing25Minutes() {
   const [activeScenarioIndex, setActiveScenarioIndex] = useState<number | null>(null);
   const closeScenarioBtnRef = useRef<HTMLButtonElement | null>(null);
 
+  // Slider state
+  const sliderRef = useRef<HTMLDivElement | null>(null);
+  const [slideIdx, setSlideIdx] = useState(0);
+  const slidesCount = 3; // scenarios length
+  const isReducedMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function scrollToIdx(idx: number) {
+    const container = sliderRef.current;
+    if (!container) return;
+    const cards = container.querySelectorAll<HTMLElement>("[data-slide]");
+    const clamped = Math.max(0, Math.min(idx, cards.length - 1));
+    const target = cards[clamped];
+    if (!target) return;
+    target.scrollIntoView({
+      behavior: isReducedMotion ? "auto" : "smooth",
+      inline: "start",
+      block: "nearest",
+    });
+    setSlideIdx(clamped);
+  }
+  const nextSlide = () => scrollToIdx(slideIdx + 1);
+  const prevSlide = () => scrollToIdx(slideIdx - 1);
+
+  // keep indicator in sync on manual scroll
+  function onSliderScroll() {
+    const container = sliderRef.current;
+    if (!container) return;
+    const card = container.querySelector<HTMLElement>("[data-slide]");
+    if (!card) return;
+    const cardWidth = card.clientWidth + 24; // gap-6 ~ 24px
+    const idx = Math.round(container.scrollLeft / cardWidth);
+    setSlideIdx(Math.max(0, Math.min(idx, slidesCount - 1)));
+  }
+
   const payLink = useMemo(() => "https://example.com/yookassa-link", []);
   const thisYear = useMemo(() => new Date().getFullYear(), []);
 
@@ -35,11 +72,14 @@ export default function Landing25Minutes() {
 
   function imageFallback(e: React.SyntheticEvent<HTMLImageElement>) {
     const img = e.currentTarget as HTMLImageElement;
-    img.src = `data:image/svg+xml;utf8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450"><rect width="100%" height="100%" fill="#fff7ed"/><text x="50%" y="52%" text-anchor="middle" font-size="16" fill="#7c2d12" font-family="system-ui,Segoe UI,Roboto">Фото недоступно</text></svg>')}`;
+    img.src = `data:image/svg+xml;utf8,${encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450"><rect width="100%" height="100%" fill="#fff7ed"/><text x="50%" y="52%" text-anchor="middle" font-size="16" fill="#7c2d12" font-family="system-ui,Segoe UI,Roboto">Фото недоступно</text></svg>'
+    )}`;
   }
 
   // Content
-  const heroImageUrl = "https://images.unsplash.com/photo-1695400090309-6b0d6c2a1a6b?q=80&w=1600&auto=format&fit=crop";
+  const heroImageUrl =
+    "https://images.unsplash.com/photo-1695400090309-6b0d6c2a1a6b?q=80&w=1600&auto=format&fit=crop";
   const scenarios = [
     {
       key: "spy",
@@ -49,7 +89,11 @@ export default function Landing25Minutes() {
       img: "https://images.unsplash.com/photo-1674699889972-0b3e8f8e4a6d?q=80&w=1200&auto=format&fit=crop",
       short: "Квест по дому с подсказками → секретное рукопожатие.",
       materials: "Бумага, маркер, 3–5 стикеров",
-      steps: ["Выберите 3 слова‑цели", "Спрячьте 3 подсказки по дому", "Финал: рукопожатие/обнимашка"],
+      steps: [
+        "Выберите 3 слова‑цели",
+        "Спрячьте 3 подсказки по дому",
+        "Финал: рукопожатие/обнимашка",
+      ],
       goal: "Внимание и командность",
     },
     {
@@ -60,7 +104,11 @@ export default function Landing25Minutes() {
       img: "https://images.unsplash.com/photo-1667485271634-1b4b1b5a66de?q=80&w=1200&auto=format&fit=crop",
       short: "Мини‑миссия на кухне: тост‑сет → медаль повара.",
       materials: "Тостер/сковорода, хлеб, бумажная «медаль»",
-      steps: ["Роли: командир/ассистент", "3 шага тоста", "Финал: «медаль повара» + фото‑жест"],
+      steps: [
+        "Роли: командир/ассистент",
+        "3 шага тоста",
+        "Финал: «медаль повара» + фото‑жест",
+      ],
       goal: "Ответственность и результат",
     },
     {
@@ -108,11 +156,25 @@ export default function Landing25Minutes() {
       <section className="max-w-6xl mx-auto px-4 pt-10 pb-8 grid md:grid-cols-2 gap-10 items-center">
         <div>
           <h1 className="text-3xl md:text-5xl font-semibold leading-tight text-gray-900">
-            Вечер без экранов за 25 минут.
+            Меньше экранов. Больше вместе. 25‑минутные семейные окна.
           </h1>
           <p className="mt-4 text-lg text-gray-700">
-            Готовые офлайн‑сценарии без подготовки. Пробный доступ на 7 дней — 99 ₽.
+            Два вечера в неделю по 25 минут. Готовые офлайн‑игры без подготовки. Начните за 99 ₽.
           </p>
+          <div className="mt-2 text-sm text-gray-600">
+            Для семей с детьми <strong>5–11 лет</strong>. Простыми словами и без сложностей.
+          </div>
+          <ul className="mt-4 text-sm text-gray-800 space-y-2 list-disc pl-5">
+            <li>
+              <strong>Без скандалов за экран.</strong> Даём интересную замену, а не запреты.
+            </li>
+            <li>
+              <strong>Реально для уставших.</strong> 3 шага, всё понятно, 25 минут — и готово.
+            </li>
+            <li>
+              <strong>Тёплая точка в конце.</strong> Медалька/обнимашка — дети сами зовут «на тайм».
+            </li>
+          </ul>
           <div className="mt-6 flex flex-col sm:flex-row gap-3 max-w-md">
             <button
               onClick={() => setIsPayOpen(true)}
@@ -140,59 +202,171 @@ export default function Landing25Minutes() {
         </div>
       </section>
 
-      {/* SCENARIOS — clickable */}
-      <section className="max-w-6xl mx-auto px-4 py-12">
-        <h2 className="text-2xl md:text-3xl font-semibold">Сценарии недели</h2>
-        <p className="mt-2 text-sm text-gray-600">Нажмите на карточку — выедет краткое описание и шаги.</p>
-        <div className="mt-6 grid md:grid-cols-3 gap-6">
+      {/* SCENARIOS — slider (accessible, swipe + keyboard) */}
+      <section className="max-w-6xl mx-auto px-4 py-12" aria-labelledby="scenarios-title">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h2 id="scenarios-title" className="text-2xl md:text-3xl font-semibold">
+              Сценарии недели
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Листайте и выбирайте. Нажмите на карточку — увидите короткое описание и 3 шага.
+            </p>
+          </div>
+          {/* arrows on desktop */}
+          <div className="hidden md:flex items-center gap-2" aria-hidden>
+            <button
+              onClick={prevSlide}
+              className="h-10 w-10 rounded-full border hover:bg-orange-50"
+              aria-label="Предыдущий сценарий"
+            >
+              ‹
+            </button>
+            <button
+              onClick={nextSlide}
+              className="h-10 w-10 rounded-full border hover:bg-orange-50"
+              aria-label="Следующий сценарий"
+            >
+              ›
+            </button>
+          </div>
+        </div>
+
+        <div
+          ref={sliderRef}
+          onScroll={onSliderScroll}
+          className="mt-6 flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-px-4 pb-2"
+          role="region"
+          aria-roledescription="carousel"
+          aria-label="Сценарии недели"
+        >
           {scenarios.map((s, i) => (
             <button
               key={s.key}
+              data-slide
               onClick={() => openScenario(i)}
-              className="text-left rounded-2xl border overflow-hidden hover:shadow focus:outline-none focus:ring-2 focus:ring-orange-600"
+              className="snap-start shrink-0 w-[85%] sm:w-[60%] md:w-[33%] text-left rounded-2xl border overflow-hidden hover:shadow focus:outline-none focus:ring-2 focus:ring-orange-600"
+              aria-describedby={`scenario-${s.key}-desc`}
             >
-              <img src={s.img} alt={s.t} className="w-full h-48 object-cover" loading="lazy" onError={imageFallback} />
+              <img
+                src={s.img}
+                alt={s.t}
+                className="w-full h-48 object-cover"
+                loading="lazy"
+                onError={imageFallback}
+              />
               <div className="p-5">
                 <div className="text-lg font-semibold">{s.t}</div>
                 <div className="mt-1 text-xs text-orange-700">
                   {s.age} • {s.dur}
                 </div>
-                <p className="mt-2 text-sm text-gray-700">{s.short}</p>
+                <p id={`scenario-${s.key}-desc`} className="mt-2 text-sm text-gray-700">
+                  {s.short}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                  <span className={UI.pill}>🎯 Цель: {s.goal}</span>
+                  <span className={UI.pill}>🧰 Материалы за 1 минуту</span>
+                </div>
               </div>
             </button>
           ))}
         </div>
-      </section>
 
-      {/* HOW IT WORKS — refined, elegant */}
-      <section id="how" className="bg-orange-50/50 border-y">
-        <div className="max-w-6xl mx-auto px-4 py-12">
-          <h2 className="text-2xl md:text-3xl font-semibold">Как это работает</h2>
-          <div className="mt-6 grid md:grid-cols-3 gap-6">
-            {[
-              {
-                t: "1) Выберите 2 вечера",
-                d: "Назначьте время. Если наступит — мы напомним.",
-              },
-              {
-                t: "2) Откройте сценарий (3 шага)",
-                d: "25 минут офлайн без подготовки. Всё под рукой.",
-              },
-              {
-                t: "3) Завершите «пиком»",
-                d: "Общий финал — медалька/обнимашка и фото‑жест.",
-              },
-            ].map((s, i) => (
-              <div key={i} className="rounded-2xl border bg-white p-6">
-                <div className="text-lg font-semibold">{s.t}</div>
-                <p className="mt-2 text-gray-600">{s.d}</p>
-              </div>
+        {/* dots + mobile arrows */}
+        <div className="mt-4 flex items-center justify-center gap-3">
+          <button onClick={prevSlide} className="md:hidden h-9 w-9 rounded-full border" aria-label="Назад">
+            ‹
+          </button>
+          <div className="flex items-center gap-2" role="tablist" aria-label="Навигация по сценариям">
+            {scenarios.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => scrollToIdx(i)}
+                role="tab"
+                aria-selected={slideIdx === i}
+                aria-label={`Слайд ${i + 1}`}
+                className={`h-2.5 w-2.5 rounded-full ${slideIdx === i ? "bg-orange-600" : "bg-orange-200"}`}
+              />
             ))}
           </div>
-          <div className="mt-6 flex flex-wrap items-center gap-3 text-xs text-gray-600">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-orange-200 text-orange-800">⏱ 25 минут</span>
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-orange-200 text-orange-800">🧰 Без подготовки</span>
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-orange-200 text-orange-800">📣 Напоминания If‑Then</span>
+          <button onClick={nextSlide} className="md:hidden h-9 w-9 rounded-full border" aria-label="Вперёд">
+            ›
+          </button>
+        </div>
+
+        <p className="sr-only" aria-live="polite">
+          Показан слайд {slideIdx + 1} из {scenarios.length}
+        </p>
+      </section>
+
+      {/* WHAT YOU GET — конкретика внутри 7 дней */}
+      <section id="what-you-get" className="max-w-6xl mx-auto px-4 py-12">
+        <h2 className="text-2xl md:text-3xl font-semibold">Что вы получите за 7 дней</h2>
+        <div className="mt-6 grid md:grid-cols-4 gap-6">
+          <div className="rounded-2xl border p-6 bg-white">
+            <div className="text-lg font-semibold">Готовые занятия</div>
+            <p className="mt-2 text-gray-700">6–8 коротких сценариев по возрастам 5–11 лет. Без подготовки.</p>
+          </div>
+          <div className="rounded-2xl border p-6 bg-white">
+            <div className="text-lg font-semibold">Напоминания</div>
+            <p className="mt-2 text-gray-700">«Если 19:30 — то играем». Помогаем не забыть и не сорваться.</p>
+          </div>
+          <div className="rounded-2xl border p-6 bg-white">
+            <div className="text-lg font-semibold">Отметки прогресса</div>
+            <p className="mt-2 text-gray-700">Простой чек‑лист «сделали». Видно, как у вас получается.</p>
+          </div>
+          <div className="rounded-2xl border p-6 bg-white">
+            <div className="text-lg font-semibold">Награды и похвала</div>
+            <p className="mt-2 text-gray-700">Медальки/обнимашки и понятные фразы похвалы.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* WHY IT WORKS — speak mom's language */}
+      <section id="why" className="bg-orange-50/50 border-y">
+        <div className="max-w-6xl mx-auto px-4 py-12">
+          <h2 className="text-2xl md:text-3xl font-semibold">Почему это работает</h2>
+          <div className="mt-6 grid md:grid-cols-3 gap-6">
+            <div className="rounded-2xl border bg-white p-6">
+              <div className="text-lg font-semibold">Понятные правила</div>
+              <p className="mt-2 text-gray-700">
+                Мы не запрещаем. Мы договоримся о времени без экранов и держимся плана.
+              </p>
+            </div>
+            <div className="rounded-2xl border bg-white p-6">
+              <div className="text-lg font-semibold">План «если‑то»</div>
+              <p className="mt-2 text-gray-700">
+                «Если наступило время — мы начинаем». Напоминания помогают не сорваться.
+              </p>
+            </div>
+            <div className="rounded-2xl border bg-white p-6">
+              <div className="text-lg font-semibold">Игра и близость</div>
+              <p className="mt-2 text-gray-700">
+                Короткая совместная игра + тёплый финал. Дети ждут, родители спокойнее.
+              </p>
+            </div>
+          </div>
+          <p className="mt-6 text-xs text-gray-500">
+            Коротко: простые правила, напоминания и тёплые ритуалы → меньше конфликтов и больше «мы вместе».
+          </p>
+        </div>
+      </section>
+
+      {/* DIFFERENTIATORS — чем мы отличаемся */}
+      <section id="why-us" className="max-w-6xl mx-auto px-4 py-12">
+        <h2 className="text-2xl md:text-3xl font-semibold">Чем мы отличаемся</h2>
+        <div className="mt-6 grid md:grid-cols-3 gap-6">
+          <div className="rounded-2xl border p-6 bg-white">
+            <div className="text-lg font-semibold">Альтернатива экрану</div>
+            <p className="mt-2 text-gray-700">Не «нельзя телефон», а «давай сыграем вместе 25 минут».</p>
+          </div>
+          <div className="rounded-2xl border p-6 bg-white">
+            <div className="text-lg font-semibold">Быстрый старт</div>
+            <p className="mt-2 text-gray-700">Никакой подготовки. Открыли сценарий — и пошли.</p>
+          </div>
+          <div className="rounded-2xl border p-6 bg-white">
+            <div className="text-lg font-semibold">Тёплый финал</div>
+            <p className="mt-2 text-gray-700">Медалька/обнимашка. Хорошее настроение перед сном.</p>
           </div>
         </div>
       </section>
@@ -231,6 +405,37 @@ export default function Landing25Minutes() {
               </div>
             </figure>
           ))}
+        </div>
+      </section>
+
+      {/* FAQ — снимаем сомнения коротко */}
+      <section id="faq" className="max-w-6xl mx-auto px-4 py-12">
+        <h2 className="text-2xl md:text-3xl font-semibold">Частые вопросы</h2>
+        <div className="mt-6 grid md:grid-cols-2 gap-6">
+          <div className="rounded-2xl border p-6 bg-white">
+            <div className="font-semibold">Двое детей разного возраста?</div>
+            <p className="mt-2 text-gray-700 text-sm">
+              Берём сценарий под старшего. Младшему — простые роли. Подсказки есть в описании.
+            </p>
+          </div>
+          <div className="rounded-2xl border p-6 bg-white">
+            <div className="font-semibold">Пропустили вечер?</div>
+            <p className="mt-2 text-gray-700 text-sm">
+              Ок. Перенесём на завтра. Напоминания вернут в ритм.
+            </p>
+          </div>
+          <div className="rounded-2xl border p-6 bg-white">
+            <div className="font-semibold">Оплата безопасна?</div>
+            <p className="mt-2 text-gray-700 text-sm">
+              Да, через проверенного провайдера. Данные карты не храним.
+            </p>
+          </div>
+          <div className="rounded-2xl border p-6 bg-white">
+            <div className="font-semibold">Можно отменить?</div>
+            <p className="mt-2 text-gray-700 text-sm">
+              Да, в один клик в любой момент. Без звонков и объяснений.
+            </p>
+          </div>
         </div>
       </section>
 
