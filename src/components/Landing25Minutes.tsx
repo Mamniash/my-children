@@ -52,14 +52,11 @@ export default function Landing25Minutes(): JSX.Element {
 			typeof window !== 'undefined' ? window.location.href : 'https://local'
 		)
 		const isPreview = url.searchParams.get('preview') === '1'
-		const delayMs = isPreview ? 6000 : 15 * 60 * 1000 // 6s for preview, 15 min for prod
+		const delayMs = 15000
 		const t = setTimeout(() => {
 			setShowSticky(true)
-			setStickyBoom(true)
-			// stop accent animation after a few seconds
-			const s = setTimeout(() => setStickyBoom(false), 6000)
-			return () => clearTimeout(s)
 		}, delayMs)
+
 		return () => clearTimeout(t)
 	}, [])
 
@@ -248,50 +245,77 @@ export default function Landing25Minutes(): JSX.Element {
 
 	return (
 		<div className='min-h-screen bg-white text-gray-900'>
-			{/* HERO — краткое описание + фото, без буллетов в хиро */}
-			<section className='max-w-6xl mx-auto px-4 pt-10 pb-8 grid md:grid-cols-2 gap-10 items-center'>
-				<div>
-					<h1 className='text-3xl md:text-5xl font-semibold leading-tight text-gray-900'>
-						25‑минутные окна для семьи.
-					</h1>
-					<p className='mt-4 text-lg text-gray-800'>
-						Готовые офлайн‑миссии для родителя и ребёнка{' '}
-						<strong>5–11 лет</strong>. Выбираешь время, жмёшь старт, 3
-						шага — и тёплый финал. Без подготовки и без экранов.
-					</p>
-					<p className='mt-3 text-sm text-gray-600'>
-						Два вечера в неделю по 25 минут. Остальное — ниже на странице.
-					</p>
-					<div className='mt-6 flex flex-col sm:flex-row gap-3 max-w-md'>
-						<button
-							id='hero-cta'
-							onClick={() => setIsPayOpen(true)}
-							className={`w-full sm:w-auto px-6 py-3 min-h-[48px] rounded-2xl font-semibold ${UI.cta}`}
+			{/* HERO — мобильный: заголовок → фото → описание; кнопки прижаты к нижней кромке, обе видны */}
+			<section className='px-4 pt-4 pb-0 md:pt-10 md:pb-8'>
+				<div className='md:grid md:grid-cols-2 md:gap-10 max-w-6xl mx-auto'>
+					{/* Левая колонка (на мобилке — весь первый экран) */}
+					<div className='flex flex-col min-h-[100svh] md:min-h-0 justify-between'>
+						{/* Верхняя часть: заголовок + фото + описание */}
+						<div>
+							<h1 className='text-3xl md:text-5xl font-semibold leading-tight text-gray-900'>
+								Короткие семейные миссии по 25 минут
+							</h1>
+
+							{/* Фото сразу после заголовка на мобилке */}
+							<div className='mt-3 md:hidden'>
+								<div className='aspect-video rounded-3xl bg-gradient-to-br from-orange-50 to-white border shadow-sm p-3 overflow-hidden'>
+									<img
+										src={heroImageUrl}
+										alt='Родитель и ребёнок выполняют 25‑минутную миссию'
+										className='w-full h-full object-cover rounded-2xl'
+										loading='lazy'
+										onError={imageFallback}
+									/>
+								</div>
+							</div>
+
+							<p className='mt-3 text-base md:text-lg text-gray-800'>
+								Готовые офлайн‑миссии для родителя и ребёнка{' '}
+								<strong>5–11 лет</strong>. Выбираешь время, жмёшь старт,
+								3 шага — и тёплый финал. Без подготовки и без экранов.
+							</p>
+							<p className='mt-2 text-xs md:text-sm text-gray-600'>
+								Два вечера в неделю по 25 минут. Остальное — ниже на
+								странице
+							</p>
+						</div>
+
+						{/* Нижняя часть: кнопки — всегда в первом экране на мобилке */}
+						<div
+							className='pt-4'
+							style={{
+								paddingBottom: 'max(12px, env(safe-area-inset-bottom))'
+							}}
 						>
-							Начать 7 дней / 99 ₽
-						</button>
-						<a
-							href='#scenarios-title'
-							className='w-full sm:w-auto px-6 py-3 min-h-[48px] rounded-2xl font-semibold border text-gray-800 text-center'
-						>
-							Посмотреть сценарии
-						</a>
+							<div className='grid grid-cols-2 gap-2'>
+								<button
+									id='hero-cta'
+									onClick={() => setIsPayOpen(true)}
+									className={`px-3 py-3 min-h-[44px] rounded-2xl font-semibold text-[15px] ${UI.cta}`}
+								>
+									Начать 7 дней / 99 ₽
+								</button>
+								<a
+									href='#scenarios-title'
+									className='px-3 py-3 min-h-[44px] rounded-2xl font-semibold text-[15px] border text-gray-800 text-center'
+								>
+									Посмотреть сценарии
+								</a>
+							</div>
+						</div>
 					</div>
-					<div className='mt-4 flex flex-wrap items-center gap-3 text-sm'>
-						<span className={UI.pill}>👨‍👩‍👧 Для 5–11 лет</span>
-						<span className={UI.pill}>⏱️ 25 минут</span>
-						<span className={UI.pill}>🧰 Без подготовки</span>
-					</div>
-				</div>
-				<div className='relative'>
-					<div className='aspect-video rounded-3xl bg-gradient-to-br from-orange-50 to-white border shadow-sm p-3 overflow-hidden'>
-						<img
-							src={heroImageUrl}
-							alt='Родитель и ребёнок выполняют 25‑минутную миссию'
-							className='w-full h-full object-cover rounded-2xl'
-							loading='lazy'
-							onError={imageFallback}
-						/>
+
+					{/* Правая колонка — картинка на десктопе */}
+					<div className='hidden md:block'>
+						<div className='aspect-video rounded-3xl bg-gradient-to-br from-orange-50 to-white border shadow-sm p-3 overflow-hidden'>
+							<img
+								src={heroImageUrl}
+								alt='Родитель и ребёнок выполняют 25‑минутную миссию'
+								className='w-full h-full object-cover rounded-2xl'
+								loading='lazy'
+								onError={imageFallback}
+							/>
+						</div>
 					</div>
 				</div>
 			</section>
@@ -596,61 +620,24 @@ export default function Landing25Minutes(): JSX.Element {
 			</section>
 
 			{/* FAQ */}
-			<section id='faq' className='max-w-6xl mx-auto px-4 py-12'>
-				<h2 className='text-2xl md:text-3xl font-semibold'>
-					Частые вопросы
-				</h2>
-				<div className='mt-6 grid md:grid-cols-2 gap-6'>
-					<div className='rounded-2xl border p-6 bg-white'>
-						<div className='font-semibold'>Почему 25 минут?</div>
-						<p className='mt-2 text-gray-700 text-sm'>
-							Потому что это реально выполнить даже в загруженный день.
-							Этого хватает, чтобы поиграть, услышать друг друга и
-							завершить вечер «тёплой точкой». Важно делать{' '}
-							<strong>регулярно</strong>.
-						</p>
-					</div>
-					<div className='rounded-2xl border p-6 bg-white'>
-						<div className='font-semibold'>
-							Двое детей разного возраста?
-						</div>
-						<p className='mt-2 text-gray-700 text-sm'>
-							Берём сценарий под старшего. Младшему — простые роли.
-							Подсказки есть в описании.
-						</p>
-					</div>
-					<div className='rounded-2xl border p-6 bg-white'>
-						<div className='font-semibold'>Пропустили вечер?</div>
-						<p className='mt-2 text-gray-700 text-sm'>
-							Ок. Перенесём на завтра. Напоминания вернут в ритм.
-						</p>
-					</div>
-					<div className='rounded-2xl border p-6 bg-white'>
-						<div className='font-semibold'>Оплата безопасна?</div>
-						<p className='mt-2 text-gray-700 text-sm'>
-							Да, через проверенного провайдера. Данные карты не храним.
-						</p>
-					</div>
-					<div className='rounded-2xl border p-6 bg-white'>
-						<div className='font-semibold'>Можно отменить?</div>
-						<p className='mt-2 text-gray-700 text-sm'>
-							Да, в один клик в любой момент. Без звонков и объяснений.
-						</p>
-					</div>
-				</div>
-			</section>
 
 			{/* PRICING */}
-			<section id='price' className='max-w-6xl mx-auto px-4 pb-16'>
-				<div className='grid md:grid-cols-2 gap-6'>
+			<section id='price' className='max-w-6xl mx-auto px-4 pb-12'>
+				<h2 className='text-2xl md:text-3xl font-semibold'>Тарифы</h2>
+				<p className='mt-1 text-sm text-gray-600'>
+					Начните с недели, а потом переходите на месяц — когда войдёте в
+					ритм.
+				</p>
+				<div className='mt-6 grid md:grid-cols-2 gap-6'>
+					{/* Старт */}
 					<div
 						data-price-card
-						className='rounded-2xl border p-6 ring-2 ring-orange-600'
+						className='rounded-3xl border p-6 ring-2 ring-orange-600'
 					>
 						<div className='text-sm font-semibold text-orange-700'>
 							Старт • лучший выбор
 						</div>
-						<div className='mt-2 text-3xl font-bold'>99 ₽</div>
+						<div className='mt-2 text-4xl font-extrabold'>99 ₽</div>
 						<div className='text-xs text-gray-500'>7 дней доступа</div>
 						<ul className='mt-4 text-sm text-gray-700 space-y-2 list-disc pl-4'>
 							<li>Все сценарии недели</li>
@@ -659,16 +646,18 @@ export default function Landing25Minutes(): JSX.Element {
 						</ul>
 						<button
 							onClick={() => setIsPayOpen(true)}
-							className={`mt-5 inline-flex w-full justify-center px-4 py-3 rounded-xl font-semibold ${UI.cta}`}
+							className={`mt-5 inline-flex w-full justify-center px-4 py-3 rounded-2xl font-semibold ${UI.cta}`}
 						>
-							Оплатить и начать
+							Оплатить 99 ₽ и начать
 						</button>
 					</div>
-					<div data-price-card className='rounded-2xl border p-6'>
+
+					{/* Подписка */}
+					<div data-price-card className='rounded-3xl border p-6'>
 						<div className='text-sm font-semibold text-orange-700'>
 							Подписка • месяц
 						</div>
-						<div className='mt-2 text-3xl font-bold'>349 ₽</div>
+						<div className='mt-2 text-4xl font-extrabold'>349 ₽</div>
 						<div className='text-xs text-gray-500'>в месяц</div>
 						<ul className='mt-4 text-sm text-gray-700 space-y-2 list-disc pl-4'>
 							<li>Полная библиотека сценариев</li>
@@ -677,11 +666,65 @@ export default function Landing25Minutes(): JSX.Element {
 						</ul>
 						<button
 							onClick={() => setIsPayOpen(true)}
-							className={`mt-5 inline-flex w-full justify-center px-4 py-3 rounded-xl font-semibold ${UI.cta}`}
+							className={`mt-5 inline-flex w-full justify-center px-4 py-3 rounded-2xl font-semibold ${UI.cta}`}
 						>
 							Оформить подписку
 						</button>
 					</div>
+				</div>
+
+				{/* Лейблы под тарифами */}
+				<div className='mt-4 flex flex-wrap items-center gap-2 text-sm'>
+					<span className={UI.pill}>↩︎ Отмена в 1 клик</span>
+					<span className={UI.pill}>🔒 Оплата защищена</span>
+					<span className={UI.pill}>⚡ Моментальный доступ</span>
+				</div>
+			</section>
+
+			{/* FAQ — после тарифов, сворачиваемые items */}
+			<section id='faq' className='max-w-6xl mx-auto px-4 py-12'>
+				<h2 className='text-2xl md:text-3xl font-semibold'>
+					Частые вопросы
+				</h2>
+				<div className='mt-6 grid md:grid-cols-2 gap-6'>
+					{[
+						{
+							q: 'Почему 25 минут?',
+							a: 'Потому что это реально выполнить даже в загруженный день. Этого хватает, чтобы поиграть, услышать друг друга и завершить вечер «тёплой точкой». Важно делать регулярно.'
+						},
+						{
+							q: 'Двое детей разного возраста?',
+							a: 'Берём сценарий под старшего. Младшему — простые роли. Подсказки есть в описании.'
+						},
+						{
+							q: 'Пропустили вечер?',
+							a: 'Ок. Перенесём на завтра. Напоминания вернут в ритм.'
+						},
+						{
+							q: 'Оплата безопасна?',
+							a: 'Да, через проверенного провайдера. Данные карты не храним.'
+						},
+						{
+							q: 'Можно отменить?',
+							a: 'Да, в один клик в любой момент. Без звонков и объяснений.'
+						}
+					].map((item, i) => (
+						<details
+							key={i}
+							className='rounded-2xl border bg-white p-5 group'
+						>
+							<summary className='cursor-pointer select-none font-semibold text-gray-900 flex items-center justify-between'>
+								{item.q}
+								<span
+									aria-hidden
+									className='ml-3 text-orange-700 group-open:rotate-180 transition-transform'
+								>
+									▾
+								</span>
+							</summary>
+							<p className='mt-3 text-gray-700 text-sm'>{item.a}</p>
+						</details>
+					))}
 				</div>
 			</section>
 
@@ -737,9 +780,7 @@ export default function Landing25Minutes(): JSX.Element {
 					</span>
 					<button
 						onClick={() => setIsPayOpen(true)}
-						className={`px-4 py-2 min-h-[44px] rounded-xl text-sm font-semibold ${
-							UI.cta
-						} ${stickyBoom ? 'animate-bounce' : ''}`}
+						className={`px-4 py-2 min-h-[44px] rounded-xl text-sm font-semibold ${UI.cta} `}
 					>
 						Начать 7 дней / 99 ₽
 					</button>
