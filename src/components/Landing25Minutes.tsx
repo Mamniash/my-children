@@ -364,16 +364,13 @@ export default function Landing25Minutes(): JSX.Element {
 		)}`
 	}
 
-	// Content
-        const heroImageUrl =
-                'https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=1600&q=80'
 	const scenarios: Scenario[] = [
 		{
 			key: 'spy',
 			t: 'Шпион‑слова',
 			age: '7–9 лет',
 			dur: '25 минут',
-                        img: 'https://images.unsplash.com/photo-1542318428-29f26af1ff86?auto=format&fit=crop&w=1200&q=80',
+			img: 'images/1.png',
 			short: 'Квест по дому с подсказками → секретное рукопожатие.',
 			long: 'Делаем мини‑квест из 3 подсказок. В каждой — слово‑улика. Ребёнок находит слово, произносит «пароль» и получает следующую подсказку. В финале — секретное рукопожатие/обнимашка и короткая похвала за конкретное действие.',
 			materials: 'Бумага, маркер, 3–5 стикеров, скотч',
@@ -405,7 +402,7 @@ export default function Landing25Minutes(): JSX.Element {
 			t: 'Командир кухни',
 			age: '9–11 лет',
 			dur: '25 минут',
-                        img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1200&q=80',
+			img: 'images/2.png',
 			short: 'Мини‑миссия на кухне: тост‑сет → медаль повара.',
 			long: 'Ребёнок — «командир кухни», взрослый — ассистент. Задача: собрать тост‑сет. Важное: короткие команды, безопасные действия, финальная «медаль повара».',
 			materials: 'Хлеб/лаваш, намазка, тарелка, стакан, бумажная «медаль».',
@@ -437,7 +434,7 @@ export default function Landing25Minutes(): JSX.Element {
 			t: 'Охота на буквы',
 			age: '5–7 лет',
 			dur: '25 минут',
-                        img: 'https://images.unsplash.com/photo-1523475472560-d2df97ec485c?auto=format&fit=crop&w=1200&q=80',
+			img: 'images/main.png',
 			short: 'Ищем буквы вокруг дома → мини‑награда.',
 			long: 'Выбираем «букву дня» и ищем 5 предметов на эту букву. Фотографируем/отмечаем галочкой. В финале — наклейка и проговаривание слов.',
 			materials: 'Карточки/наклейки, бумага, маркер.',
@@ -522,7 +519,7 @@ export default function Landing25Minutes(): JSX.Element {
 						<div className='mt-4 md:hidden'>
 							<div className='relative aspect-video rounded-3xl bg-gradient-to-br from-orange-50 to-white border shadow-sm p-3 overflow-hidden'>
 								<img
-									src={heroImageUrl}
+									src={'images/main.png'}
 									alt='Родитель и ребёнок выполняют миссию'
 									className='w-full h-full object-cover rounded-2xl'
 									loading='lazy'
@@ -551,13 +548,13 @@ export default function Landing25Minutes(): JSX.Element {
 							}}
 						>
 							<div className='grid grid-cols-2 gap-2'>
-                                                                <button
-                                                                        id='hero-cta'
-                                                                        onClick={() => openContactModal('hero-cta')}
-                                                                        className={`px-3 py-3 min-h-[44px] rounded-2xl font-semibold text-[15px] ${UI.cta}`}
-                                                                >
-                                                                        Получить 7 дней бесплатно
-                                                                </button>
+								<button
+									id='hero-cta'
+									onClick={() => openContactModal('hero-cta')}
+									className={`px-3 py-3 min-h-[44px] rounded-2xl font-semibold text-[15px] ${UI.cta}`}
+								>
+									Получить 7 дней бесплатно
+								</button>
 								<a
 									href='#scenarios-title'
 									className='px-3 py-3 min-h-[44px] rounded-2xl font-semibold text-[15px] border text-gray-800 text-center'
@@ -574,7 +571,7 @@ export default function Landing25Minutes(): JSX.Element {
 					<div className='hidden md:block'>
 						<div className='relative aspect-video rounded-3xl bg-gradient-to-br from-orange-50 to-white border shadow-sm p-3 overflow-hidden'>
 							<img
-								src={heroImageUrl}
+								src={'images/main.png'}
 								alt='Родитель и ребёнок выполняют миссию'
 								className='w-full h-full object-cover rounded-2xl'
 								loading='lazy'
@@ -867,32 +864,34 @@ export default function Landing25Minutes(): JSX.Element {
 			{/* PRICING */}
 			<section id='price' className='max-w-6xl mx-auto px-4 pb-12'>
 				<h2 className='text-2xl md:text-3xl font-semibold'>Тарифы</h2>
-                                <p className='mt-1 text-sm text-gray-600'>
-                                        Начните с бесплатной недели, а потом переходите на месяц — когда
-                                        войдёте в ритм.
-                                </p>
+				<p className='mt-1 text-sm text-gray-600'>
+					Начните с бесплатной недели, а потом переходите на месяц — когда
+					войдёте в ритм.
+				</p>
 				<div className='mt-6 grid md:grid-cols-2 gap-6'>
 					{/* Старт */}
 					<div
 						data-price-card
 						className='rounded-3xl border p-6 ring-2 ring-orange-600'
 					>
-                                                <div className='text-sm font-semibold text-orange-700'>
-                                                        Старт • пробная неделя
-                                                </div>
-                                                <div className='mt-2 text-4xl font-extrabold text-orange-700'>Бесплатно</div>
-                                                <div className='text-xs text-gray-500'>7 дней доступа</div>
-                                                <ul className='mt-4 text-sm text-gray-700 space-y-2 list-disc pl-4'>
-                                                        <li>Все сценарии недели в Telegram‑боте</li>
-                                                        <li>Напоминания «If‑Then»</li>
-                                                        <li>Поддержка в чате</li>
-                                                </ul>
-                                                <button
-                                                        onClick={() => openContactModal('pricing-trial')}
-                                                        className={`mt-5 inline-flex w-full justify-center px-4 py-3 rounded-2xl font-semibold ${UI.cta}`}
-                                                >
-                                                        Получить 7 дней бесплатно
-                                                </button>
+						<div className='text-sm font-semibold text-orange-700'>
+							Старт • пробная неделя
+						</div>
+						<div className='mt-2 text-4xl font-extrabold text-orange-700'>
+							Бесплатно
+						</div>
+						<div className='text-xs text-gray-500'>7 дней доступа</div>
+						<ul className='mt-4 text-sm text-gray-700 space-y-2 list-disc pl-4'>
+							<li>Все сценарии недели в Telegram‑боте</li>
+							<li>Напоминания «If‑Then»</li>
+							<li>Поддержка в чате</li>
+						</ul>
+						<button
+							onClick={() => openContactModal('pricing-trial')}
+							className={`mt-5 inline-flex w-full justify-center px-4 py-3 rounded-2xl font-semibold ${UI.cta}`}
+						>
+							Получить 7 дней бесплатно
+						</button>
 					</div>
 
 					{/* Подписка */}
@@ -907,12 +906,14 @@ export default function Landing25Minutes(): JSX.Element {
 							<li>Семейные челленджи</li>
 							<li>История прогресса</li>
 						</ul>
-                                                <button
-                                                        onClick={() => openContactModal('pricing-subscription', 'subscription')}
-                                                        className={`mt-5 inline-flex w-full justify-center px-4 py-3 rounded-2xl font-semibold text-center ${UI.cta}`}
-                                                >
-                                                        Оформить подписку
-                                                </button>
+						<button
+							onClick={() =>
+								openContactModal('pricing-subscription', 'subscription')
+							}
+							className={`mt-5 inline-flex w-full justify-center px-4 py-3 rounded-2xl font-semibold text-center ${UI.cta}`}
+						>
+							Оформить подписку
+						</button>
 					</div>
 				</div>
 
@@ -1021,22 +1022,22 @@ export default function Landing25Minutes(): JSX.Element {
 					<span className='text-xs text-gray-600'>
 						Готовы вернуть 25 минут сегодня?
 					</span>
-                                        <button
-                                                onClick={() => openContactModal('sticky-cta')}
-                                                className={`px-4 py-2 min-h-[44px] rounded-xl text-sm font-semibold ${UI.cta} `}
-                                        >
-                                                Получить 7 дней бесплатно
-                                        </button>
+					<button
+						onClick={() => openContactModal('sticky-cta')}
+						className={`px-4 py-2 min-h-[44px] rounded-xl text-sm font-semibold ${UI.cta} `}
+					>
+						Получить 7 дней бесплатно
+					</button>
 				</div>
 			)}
 
-                        {/* PAYMENT MODAL */}
-                        {isPayOpen && (
-                                <div
-                                        className='fixed inset-0 z-50 grid place-items-center p-4'
-                                        role='dialog'
+			{/* PAYMENT MODAL */}
+			{isPayOpen && (
+				<div
+					className='fixed inset-0 z-50 grid place-items-center p-4'
+					role='dialog'
 					aria-modal='true'
-                                        onClick={closeContactModal}
+					onClick={closeContactModal}
 				>
 					<div className='absolute inset-0 bg-black/45' />
 					<div
@@ -1044,216 +1045,233 @@ export default function Landing25Minutes(): JSX.Element {
 						onClick={(e) => e.stopPropagation()}
 					>
 						<div className='h-1.5 bg-gradient-to-r from-orange-500 to-orange-700' />
-                                                <div className='p-7'>
-                                                        <div className='flex items-start justify-between'>
-                                                                <h3 className='text-2xl font-bold text-gray-900'>
-                                                                        {modalCopy.title}
-                                                                </h3>
-                                                                <button
-                                                                        onClick={closeContactModal}
-                                                                        className='text-gray-400 hover:text-gray-700 text-xl'
-                                                                        aria-label='Закрыть'
-                                                                >
-                                                                        ×
-                                                                </button>
-                                                        </div>
-                                                        <div className='mt-5 rounded-2xl border border-orange-100 bg-orange-50 p-5 space-y-3'>
-                                                                <p className='text-sm text-gray-700'>{modalCopy.description}</p>
-                                                                <form className='space-y-3' onSubmit={handleContactSubmit}>
-                                                                        <label className='block text-sm text-gray-700'>
-                                                                                <span className='block text-xs font-semibold uppercase tracking-wide text-gray-500'>
-                                                                                        Имя
-                                                                                </span>
-                                                                                <input
-                                                                                        type='text'
-                                                                                        value={contactName}
-                                                                                        onChange={(e) => {
-                                                                                                setContactName(e.target.value)
-                                                                                                if (contactError) setContactError('')
-                                                                                        }}
-                                                                                        className='mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none'
-                                                                                        placeholder='Как к вам обращаться'
-                                                                                />
-                                                                        </label>
-                                                                        <label className='block text-sm text-gray-700'>
-                                                                                <span className='block text-xs font-semibold uppercase tracking-wide text-gray-500'>
-                                                                                        Контакт
-                                                                                </span>
-                                                                                <input
-                                                                                        type='text'
-                                                                                        value={contactHandle}
-                                                                                        onChange={(e) => {
-                                                                                                setContactHandle(e.target.value)
-                                                                                                if (contactError) setContactError('')
-                                                                                        }}
-                                                                                        className='mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none'
-                                                                                        placeholder='@username, телефон или email'
-                                                                                        required
-                                                                                />
-                                                                        </label>
-                                                                        <label className='block text-sm text-gray-700'>
-                                                                                <span className='block text-xs font-semibold uppercase tracking-wide text-gray-500'>
-                                                                                        Комментарий
-                                                                                </span>
-                                                                                <textarea
-                                                                                        value={contactNotes}
-                                                                                        onChange={(e) => {
-                                                                                                setContactNotes(e.target.value)
-                                                                                                if (contactError) setContactError('')
-                                                                                        }}
-                                                                                        className='mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none'
-                                                                                        placeholder='Возраст ребёнка или пожелания'
-                                                                                        rows={3}
-                                                                                />
-                                                                        </label>
-                                                                        {contactError && (
-                                                                                <p className='text-xs text-red-600'>{contactError}</p>
-                                                                        )}
-                                                                        <button
-                                                                                type='submit'
-                                                                                disabled={isContactSending}
-                                                                                className={`w-full py-3 rounded-2xl font-semibold ${UI.cta} ${
-                                                                                        isContactSending ? 'opacity-80 cursor-not-allowed' : ''
-                                                                                }`}
-                                                                        >
-                                                                                {isContactSending ? 'Отправляем…' : modalCopy.submitLabel}
-                                                                        </button>
-                                                                </form>
-                                                                {isContactSent && (
-                                                                        <div
-                                                                                role='status'
-                                                                                aria-live='polite'
-                                                                                className='rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 space-y-2'
-                                                                        >
-                                                                                <p>{modalCopy.successMain}</p>
-                                                                                <p className='text-xs text-green-700'>
-                                                                                        {modalCopy.successHint}{' '}
-                                                                                        <a
-                                                                                                className='underline'
-                                                                                                href={`https://t.me/${telegramUsername}`}
-                                                                                                target='_blank'
-                                                                                                rel='noreferrer'
-                                                                                        >
-                                                                                                @{telegramUsername}
-                                                                                        </a>
-                                                                                        .
-                                                                                </p>
-                                                                        </div>
-                                                                )}
-                                                        </div>
-                                                        <p className='mt-4 text-[11px] leading-snug text-gray-500 text-center'>
-                                                                Отправляя контакт, вы соглашаетесь с{' '}
-                                                                <button
-                                                                        className='underline hover:text-orange-700'
-                                                                        onClick={() => setIsOfferOpen(true)}
-                                                                >
-                                                                        офертой
-                                                                </button>{' '}
-                                                                и{' '}
-                                                                <button
-                                                                        className='underline hover:text-orange-700'
-                                                                        onClick={() => setIsPrivacyOpen(true)}
-                                                                >
-                                                                        политикой конфиденциальности
-                                                                </button>
-                                                                .
-                                                        </p>
-                                                </div>
-                                        </div>
-                                </div>
-                        )}
+						<div className='p-7'>
+							<div className='flex items-start justify-between'>
+								<h3 className='text-2xl font-bold text-gray-900'>
+									{modalCopy.title}
+								</h3>
+								<button
+									onClick={closeContactModal}
+									className='text-gray-400 hover:text-gray-700 text-xl'
+									aria-label='Закрыть'
+								>
+									×
+								</button>
+							</div>
+							<div className='mt-5 rounded-2xl border border-orange-100 bg-orange-50 p-5 space-y-3'>
+								<p className='text-sm text-gray-700'>
+									{modalCopy.description}
+								</p>
+								<form
+									className='space-y-3'
+									onSubmit={handleContactSubmit}
+								>
+									<label className='block text-sm text-gray-700'>
+										<span className='block text-xs font-semibold uppercase tracking-wide text-gray-500'>
+											Имя
+										</span>
+										<input
+											type='text'
+											value={contactName}
+											onChange={(e) => {
+												setContactName(e.target.value)
+												if (contactError) setContactError('')
+											}}
+											className='mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none'
+											placeholder='Как к вам обращаться'
+										/>
+									</label>
+									<label className='block text-sm text-gray-700'>
+										<span className='block text-xs font-semibold uppercase tracking-wide text-gray-500'>
+											Контакт
+										</span>
+										<input
+											type='text'
+											value={contactHandle}
+											onChange={(e) => {
+												setContactHandle(e.target.value)
+												if (contactError) setContactError('')
+											}}
+											className='mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none'
+											placeholder='@username, телефон или email'
+											required
+										/>
+									</label>
+									<label className='block text-sm text-gray-700'>
+										<span className='block text-xs font-semibold uppercase tracking-wide text-gray-500'>
+											Комментарий
+										</span>
+										<textarea
+											value={contactNotes}
+											onChange={(e) => {
+												setContactNotes(e.target.value)
+												if (contactError) setContactError('')
+											}}
+											className='mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none'
+											placeholder='Возраст ребёнка или пожелания'
+											rows={3}
+										/>
+									</label>
+									{contactError && (
+										<p className='text-xs text-red-600'>
+											{contactError}
+										</p>
+									)}
+									<button
+										type='submit'
+										disabled={isContactSending}
+										className={`w-full py-3 rounded-2xl font-semibold ${
+											UI.cta
+										} ${
+											isContactSending
+												? 'opacity-80 cursor-not-allowed'
+												: ''
+										}`}
+									>
+										{isContactSending
+											? 'Отправляем…'
+											: modalCopy.submitLabel}
+									</button>
+								</form>
+								{isContactSent && (
+									<div
+										role='status'
+										aria-live='polite'
+										className='rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 space-y-2'
+									>
+										<p>{modalCopy.successMain}</p>
+										<p className='text-xs text-green-700'>
+											{modalCopy.successHint}{' '}
+											<a
+												className='underline'
+												href={`https://t.me/${telegramUsername}`}
+												target='_blank'
+												rel='noreferrer'
+											>
+												@{telegramUsername}
+											</a>
+											.
+										</p>
+									</div>
+								)}
+							</div>
+							<p className='mt-4 text-[11px] leading-snug text-gray-500 text-center'>
+								Отправляя контакт, вы соглашаетесь с{' '}
+								<button
+									className='underline hover:text-orange-700'
+									onClick={() => setIsOfferOpen(true)}
+								>
+									офертой
+								</button>{' '}
+								и{' '}
+								<button
+									className='underline hover:text-orange-700'
+									onClick={() => setIsPrivacyOpen(true)}
+								>
+									политикой конфиденциальности
+								</button>
+								.
+							</p>
+						</div>
+					</div>
+				</div>
+			)}
 
-                        {/* OFFER MODAL */}
-                        {isOfferOpen && (
-                                <div
-                                        className='fixed inset-0 z-[60] grid place-items-center p-4'
-                                        role='dialog'
-                                        aria-modal='true'
-                                        onClick={() => setIsOfferOpen(false)}
-                                >
-                                        <div className='absolute inset-0 bg-black/45' />
-                                        <div
-                                                className='relative bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden'
-                                                onClick={(e) => e.stopPropagation()}
-                                        >
-                                                <div className='h-1.5 bg-gradient-to-r from-orange-500 to-orange-700' />
-                                                <div className='p-7'>
-                                                        <div className='flex items-start justify-between'>
-                                                                <h3 className='text-2xl font-bold text-gray-900'>Публичная оферта</h3>
-                                                                <button
-                                                                        onClick={() => setIsOfferOpen(false)}
-                                                                        className='text-gray-400 hover:text-gray-700 text-xl'
-                                                                        aria-label='Закрыть'
-                                                                >
-                                                                        ×
-                                                                </button>
-                                                        </div>
-                                                        <div className='mt-5 max-h-[70vh] overflow-y-auto pr-2 text-sm text-gray-700 space-y-5'>
-                                                                {offerSections.map((section, idx) => (
-                                                                        <section key={idx} className='space-y-2'>
-                                                                                <h4 className='font-semibold text-gray-900'>
-                                                                                        {section.title}
-                                                                                </h4>
-                                                                                {section.body.map((paragraph, i) => (
-                                                                                        <p key={i} className='leading-relaxed'>
-                                                                                                {paragraph}
-                                                                                        </p>
-                                                                                ))}
-                                                                        </section>
-                                                                ))}
-                                                        </div>
-                                                </div>
-                                        </div>
-                                </div>
-                        )}
+			{/* OFFER MODAL */}
+			{isOfferOpen && (
+				<div
+					className='fixed inset-0 z-[60] grid place-items-center p-4'
+					role='dialog'
+					aria-modal='true'
+					onClick={() => setIsOfferOpen(false)}
+				>
+					<div className='absolute inset-0 bg-black/45' />
+					<div
+						className='relative bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden'
+						onClick={(e) => e.stopPropagation()}
+					>
+						<div className='h-1.5 bg-gradient-to-r from-orange-500 to-orange-700' />
+						<div className='p-7'>
+							<div className='flex items-start justify-between'>
+								<h3 className='text-2xl font-bold text-gray-900'>
+									Публичная оферта
+								</h3>
+								<button
+									onClick={() => setIsOfferOpen(false)}
+									className='text-gray-400 hover:text-gray-700 text-xl'
+									aria-label='Закрыть'
+								>
+									×
+								</button>
+							</div>
+							<div className='mt-5 max-h-[70vh] overflow-y-auto pr-2 text-sm text-gray-700 space-y-5'>
+								{offerSections.map((section, idx) => (
+									<section key={idx} className='space-y-2'>
+										<h4 className='font-semibold text-gray-900'>
+											{section.title}
+										</h4>
+										{section.body.map((paragraph, i) => (
+											<p key={i} className='leading-relaxed'>
+												{paragraph}
+											</p>
+										))}
+									</section>
+								))}
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
 
-                        {/* PRIVACY MODAL */}
-                        {isPrivacyOpen && (
-                                <div
-                                        className='fixed inset-0 z-[60] grid place-items-center p-4'
-                                        role='dialog'
-                                        aria-modal='true'
-                                        onClick={() => setIsPrivacyOpen(false)}
-                                >
-                                        <div className='absolute inset-0 bg-black/45' />
-                                        <div
-                                                className='relative bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden'
-                                                onClick={(e) => e.stopPropagation()}
-                                        >
-                                                <div className='h-1.5 bg-gradient-to-r from-orange-500 to-orange-700' />
-                                                <div className='p-7'>
-                                                        <div className='flex items-start justify-between'>
-                                                                <h3 className='text-2xl font-bold text-gray-900'>Политика конфиденциальности</h3>
-                                                                <button
-                                                                        onClick={() => setIsPrivacyOpen(false)}
-                                                                        className='text-gray-400 hover:text-gray-700 text-xl'
-                                                                        aria-label='Закрыть'
-                                                                >
-                                                                        ×
-                                                                </button>
-                                                        </div>
-                                                        <div className='mt-5 max-h-[70vh] overflow-y-auto pr-2 text-sm text-gray-700 space-y-5'>
-                                                                {privacySections.map((section, idx) => (
-                                                                        <section key={idx} className='space-y-2'>
-                                                                                <h4 className='font-semibold text-gray-900'>
-                                                                                        {section.title}
-                                                                                </h4>
-                                                                                {section.body.map((paragraph, i) => (
-                                                                                        <p key={i} className='leading-relaxed'>
-                                                                                                {paragraph}
-                                                                                        </p>
-                                                                                ))}
-                                                                        </section>
-                                                                ))}
-                                                        </div>
-                                                </div>
-                                        </div>
-                                </div>
-                        )}
+			{/* PRIVACY MODAL */}
+			{isPrivacyOpen && (
+				<div
+					className='fixed inset-0 z-[60] grid place-items-center p-4'
+					role='dialog'
+					aria-modal='true'
+					onClick={() => setIsPrivacyOpen(false)}
+				>
+					<div className='absolute inset-0 bg-black/45' />
+					<div
+						className='relative bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden'
+						onClick={(e) => e.stopPropagation()}
+					>
+						<div className='h-1.5 bg-gradient-to-r from-orange-500 to-orange-700' />
+						<div className='p-7'>
+							<div className='flex items-start justify-between'>
+								<h3 className='text-2xl font-bold text-gray-900'>
+									Политика конфиденциальности
+								</h3>
+								<button
+									onClick={() => setIsPrivacyOpen(false)}
+									className='text-gray-400 hover:text-gray-700 text-xl'
+									aria-label='Закрыть'
+								>
+									×
+								</button>
+							</div>
+							<div className='mt-5 max-h-[70vh] overflow-y-auto pr-2 text-sm text-gray-700 space-y-5'>
+								{privacySections.map((section, idx) => (
+									<section key={idx} className='space-y-2'>
+										<h4 className='font-semibold text-gray-900'>
+											{section.title}
+										</h4>
+										{section.body.map((paragraph, i) => (
+											<p key={i} className='leading-relaxed'>
+												{paragraph}
+											</p>
+										))}
+									</section>
+								))}
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
 
-                        {/* SCENARIO SLIDE-OVER */}
-                        {isScenarioOpen && activeScenarioIndex !== null && (
-                                <div className='fixed inset-0 z-50' role='dialog' aria-modal='true'>
+			{/* SCENARIO SLIDE-OVER */}
+			{isScenarioOpen && activeScenarioIndex !== null && (
+				<div className='fixed inset-0 z-50' role='dialog' aria-modal='true'>
 					<div
 						className='absolute inset-0 bg-black/45'
 						onClick={closeScenario}
@@ -1406,13 +1424,13 @@ export default function Landing25Minutes(): JSX.Element {
 								</details>
 							)}
 						</div>
-                                                <footer className='p-5 border-t'>
-                                                        <button
-                                                                onClick={() => openContactModal('scenario-panel')}
-                                                                className={`w-full inline-flex justify-center px-4 py-3 rounded-xl font-semibold ${UI.cta}`}
-                                                        >
-                                                                Получить доступ в боте
-                                                        </button>
+						<footer className='p-5 border-t'>
+							<button
+								onClick={() => openContactModal('scenario-panel')}
+								className={`w-full inline-flex justify-center px-4 py-3 rounded-xl font-semibold ${UI.cta}`}
+							>
+								Получить доступ в боте
+							</button>
 						</footer>
 					</aside>
 				</div>
