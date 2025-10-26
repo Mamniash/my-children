@@ -245,42 +245,49 @@ export default function Landing25Minutes(): JSX.Element {
 
 	return (
 		<div className='min-h-screen bg-white text-gray-900'>
-			{/* HERO — мобильный: заголовок → фото → описание; кнопки прижаты к нижней кромке, обе видны */}
-			<section className='px-4 pt-4 pb-0 md:pt-10 md:pb-8'>
-				<div className='md:grid md:grid-cols-2 md:gap-10 max-w-6xl mx-auto'>
-					{/* Левая колонка (на мобилке — весь первый экран) */}
+			{/* Оранжевая декоративная шапка */}
+			<div className='h-2 w-full bg-gradient-to-r from-orange-500 via-orange-400 to-orange-600' />
+			{/* HERO */}
+			<section className='relative isolate px-4 pt-0 md:pt-6 pb-0'>
+				<div className='max-w-6xl mx-auto md:grid md:grid-cols-2 md:gap-10'>
 					<div className='flex flex-col min-h-[100svh] md:min-h-0 justify-between'>
-						{/* Верхняя часть: заголовок + фото + описание */}
-						<div>
+						<div className='pt-5'>
 							<h1 className='text-3xl md:text-5xl font-semibold leading-tight text-gray-900'>
 								Короткие семейные миссии по 25 минут
 							</h1>
-
-							{/* Фото сразу после заголовка на мобилке */}
-							<div className='mt-3 md:hidden'>
-								<div className='aspect-video rounded-3xl bg-gradient-to-br from-orange-50 to-white border shadow-sm p-3 overflow-hidden'>
-									<img
-										src={heroImageUrl}
-										alt='Родитель и ребёнок выполняют 25‑минутную миссию'
-										className='w-full h-full object-cover rounded-2xl'
-										loading='lazy'
-										onError={imageFallback}
-									/>
-								</div>
-							</div>
-
-							<p className='mt-3 text-base md:text-lg text-gray-800'>
-								Готовые офлайн‑миссии для родителя и ребёнка{' '}
-								<strong>5–11 лет</strong>. Выбираешь время, жмёшь старт,
-								3 шага — и тёплый финал. Без подготовки и без экранов.
-							</p>
-							<p className='mt-2 text-xs md:text-sm text-gray-600'>
-								Два вечера в неделю по 25 минут. Остальное — ниже на
-								странице
+							<p className='mt-4 text-base md:text-lg text-gray-800'>
+								Это готовые офлайн‑миссии для родителя и ребёнка 5–11
+								лет. В формате Telegram‑бот — для осознанного
+								25‑минутного времени с ребёнком. Когда времени совсем не
+								много.
 							</p>
 						</div>
 
-						{/* Нижняя часть: кнопки — всегда в первом экране на мобилке */}
+						<div className='mt-4 md:hidden'>
+							<div className='relative aspect-video rounded-3xl bg-gradient-to-br from-orange-50 to-white border shadow-sm p-3 overflow-hidden'>
+								<img
+									src={heroImageUrl}
+									alt='Родитель и ребёнок выполняют миссию'
+									className='w-full h-full object-cover rounded-2xl'
+									loading='lazy'
+									onError={imageFallback}
+								/>
+								<span className='absolute top-3 left-3 text-xs px-2 py-1 rounded-full bg-white/85 border'>
+									25:00
+								</span>
+							</div>
+						</div>
+
+						<div className='rounded-2xl border bg-orange-50/60 p-5 md:p-6'>
+							<div className='text-base md:text-lg font-semibold text-gray-900'>
+								25 минут — достаточно
+							</div>
+							<p className='mt-2 text-sm text-gray-700'>
+								Короткие, но регулярные ритуалы дают больше пользы, чем
+								редкие длинные попытки.
+							</p>
+						</div>
+
 						<div
 							className='pt-4'
 							style={{
@@ -302,37 +309,30 @@ export default function Landing25Minutes(): JSX.Element {
 									Посмотреть сценарии
 								</a>
 							</div>
+							<div className='mt-2 text-[11px] text-gray-400'>
+								★ 4.8 · 1 274 семей
+							</div>
 						</div>
 					</div>
 
-					{/* Правая колонка — картинка на десктопе */}
 					<div className='hidden md:block'>
-						<div className='aspect-video rounded-3xl bg-gradient-to-br from-orange-50 to-white border shadow-sm p-3 overflow-hidden'>
+						<div className='relative aspect-video rounded-3xl bg-gradient-to-br from-orange-50 to-white border shadow-sm p-3 overflow-hidden'>
 							<img
 								src={heroImageUrl}
-								alt='Родитель и ребёнок выполняют 25‑минутную миссию'
+								alt='Родитель и ребёнок выполняют миссию'
 								className='w-full h-full object-cover rounded-2xl'
 								loading='lazy'
 								onError={imageFallback}
 							/>
+							<span className='absolute top-3 left-3 text-xs px-2 py-1 rounded-full bg-white/85 border'>
+								25:00
+							</span>
 						</div>
 					</div>
 				</div>
-			</section>
 
-			{/* MINDFUL CALLOUT */}
-			<section className='max-w-6xl mx-auto px-4 py-6'>
-				<div className='rounded-2xl border bg-orange-50/60 p-5 md:p-6'>
-					<div className='text-base md:text-lg font-semibold text-gray-900'>
-						25 минут осознанного времени — достаточно, если делать это
-						системно
-					</div>
-					<p className='mt-2 text-sm text-gray-700'>
-						Мы просим не «больше времени», а <strong>лучше</strong>: без
-						экрана, с вашим вниманием, по понятному плану. Короткие, но
-						регулярные ритуалы дают больше пользы, чем редкие длинные
-						попытки.
-					</p>
+				<div className='md:hidden flex items-center justify-center h-10 text-gray-300'>
+					<span className='text-xl'>▾</span>
 				</div>
 			</section>
 
@@ -492,53 +492,40 @@ export default function Landing25Minutes(): JSX.Element {
 				</div>
 			</section>
 
-			{/* WHY IT WORKS */}
-			<section id='why' className='bg-orange-50/50 border-y'>
-				<div className='max-w-6xl mx-auto px-4 py-12'>
-					<h2 className='text-2xl md:text-3xl font-semibold'>
-						Почему это работает
-					</h2>
-					<div className='mt-6 grid md:grid-cols-3 gap-6'>
-						<div className='rounded-2xl border bg-white p-6'>
-							<div className='text-lg font-semibold'>
-								Коротко, но регулярно
+			{/* WHY SECTION — как слайдер */}
+			<section id='why-slider' className='max-w-6xl mx-auto px-4 py-12'>
+				<h2 className='text-2xl md:text-3xl font-semibold mb-4'>
+					Почему это работает
+				</h2>
+				<div className='flex overflow-x-auto gap-4 snap-x snap-mandatory pb-2'>
+					{[
+						{
+							title: 'Регулярность вместо марафона',
+							text: '2–3 коротких ритуала в неделю приносят больше спокойствия, чем редкие «большие» проекты.'
+						},
+						{
+							title: 'Понятные правила',
+							text: 'Мы не запрещаем — просто задаём время без экранов и держимся плана.'
+						},
+						{
+							title: 'Тёплый финал',
+							text: 'Маленький ритуал завершения даёт чувство близости и уверенности для обоих.'
+						},
+						{
+							title: 'Минимум подготовки',
+							text: 'Все сценарии собраны так, чтобы начать за минуту и не искать материалы.'
+						}
+					].map((card, i) => (
+						<div
+							key={i}
+							className='snap-start shrink-0 w-[85%] sm:w-[60%] md:w-[40%] border rounded-2xl p-6 bg-white shadow-sm'
+						>
+							<div className='text-lg font-semibold text-gray-900'>
+								{card.title}
 							</div>
-							<p className='mt-2 text-gray-700'>
-								Лучше 2–3 коротких ритуала в неделю по 25 минут, чем раз
-								в месяц «большой проект». Регулярность и предсказуемость
-								— ключ к спокойному вечеру.
-							</p>
+							<p className='mt-2 text-gray-700 text-sm'>{card.text}</p>
 						</div>
-						<div className='rounded-2xl border bg-white p-6'>
-							<div className='text-lg font-semibold'>
-								Понятные правила
-							</div>
-							<p className='mt-2 text-gray-700'>
-								Мы не запрещаем. Мы договоримся о времени без экранов и
-								держимся плана.
-							</p>
-						</div>
-						<div className='rounded-2xl border bg-white p-6'>
-							<div className='text-lg font-semibold'>План «если‑то»</div>
-							<p className='mt-2 text-gray-700'>
-								«Если наступило время — мы начинаем». Напоминания
-								помогают не сорваться.
-							</p>
-						</div>
-						<div className='rounded-2xl border bg-white p-6'>
-							<div className='text-lg font-semibold'>
-								Игра и близость
-							</div>
-							<p className='mt-2 text-gray-700'>
-								Короткая совместная игра + тёплый финал. Дети ждут,
-								родители спокойнее.
-							</p>
-						</div>
-					</div>
-					<p className='mt-6 text-xs text-gray-500'>
-						Коротко: простые правила, напоминания и тёплые ритуалы →
-						меньше конфликтов и больше «мы вместе».
-					</p>
+					))}
 				</div>
 			</section>
 
@@ -1022,65 +1009,6 @@ export default function Landing25Minutes(): JSX.Element {
 							</button>
 						</footer>
 					</aside>
-				</div>
-			)}
-
-			{/* Simple doc modals */}
-			{isOfferOpen && (
-				<div
-					className='fixed inset-0 z-50 bg-black/50 grid place-items-center p-4'
-					role='dialog'
-					aria-modal='true'
-					onClick={() => setIsOfferOpen(false)}
-				>
-					<div
-						className='bg-white max-w-2xl w-full rounded-2xl shadow-xl p-6'
-						onClick={(e) => e.stopPropagation()}
-					>
-						<div className='flex items-start justify-between'>
-							<h4 className='text-lg font-semibold'>Публичная оферта</h4>
-							<button
-								className='text-gray-400 hover:text-gray-700'
-								onClick={() => setIsOfferOpen(false)}
-							>
-								×
-							</button>
-						</div>
-						<p className='mt-2 text-sm text-gray-600'>
-							Здесь будет текст оферты. Замените на юридически
-							утверждённый документ.
-						</p>
-					</div>
-				</div>
-			)}
-
-			{isPrivacyOpen && (
-				<div
-					className='fixed inset-0 z-50 bg-black/50 grid place-items-center p-4'
-					role='dialog'
-					aria-modal='true'
-					onClick={() => setIsPrivacyOpen(false)}
-				>
-					<div
-						className='bg-white max-w-2xl w-full rounded-2xl shadow-xl p-6'
-						onClick={(e) => e.stopPropagation()}
-					>
-						<div className='flex items-start justify-between'>
-							<h4 className='text-lg font-semibold'>
-								Политика конфиденциальности
-							</h4>
-							<button
-								className='text-gray-400 hover:text-gray-700'
-								onClick={() => setIsPrivacyOpen(false)}
-							>
-								×
-							</button>
-						</div>
-						<p className='mt-2 text-sm text-gray-600'>
-							Здесь будет текст политики. Укажите оператора ПДн и
-							перечень сервисов.
-						</p>
-					</div>
 				</div>
 			)}
 		</div>
