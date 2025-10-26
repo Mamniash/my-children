@@ -2,6 +2,8 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
+import { sendTrialClick, sendTrialContact } from '../helpers/telegramApi'
+
 // Single-file TSX landing for preview.
 // Tailwind CSS expected. No sticky header. Hero = short description + photo.
 // Bottom sticky CTA appears only after 15 minutes on screen (debug: add ?preview=1 to show in 6s).
@@ -25,15 +27,24 @@ interface Scenario {
 }
 
 export default function Landing25Minutes(): JSX.Element {
-	const [isPayOpen, setIsPayOpen] = useState(false)
-	const [isOfferOpen, setIsOfferOpen] = useState(false)
-	const [isPrivacyOpen, setIsPrivacyOpen] = useState(false)
+        const [isPayOpen, setIsPayOpen] = useState(false)
+        const [isOfferOpen, setIsOfferOpen] = useState(false)
+        const [isPrivacyOpen, setIsPrivacyOpen] = useState(false)
 
-	const [isScenarioOpen, setIsScenarioOpen] = useState(false)
-	const [activeScenarioIndex, setActiveScenarioIndex] = useState<
-		number | null
-	>(null)
-	const closeScenarioBtnRef = useRef<HTMLButtonElement | null>(null)
+        const [contactName, setContactName] = useState('')
+        const [contactHandle, setContactHandle] = useState('')
+        const [contactNotes, setContactNotes] = useState('')
+        const [contactError, setContactError] = useState('')
+        const [isContactSent, setIsContactSent] = useState(false)
+        const [isContactSending, setIsContactSending] = useState(false)
+
+        const [isScenarioOpen, setIsScenarioOpen] = useState(false)
+        const [activeScenarioIndex, setActiveScenarioIndex] = useState<
+                number | null
+        >(null)
+        const closeScenarioBtnRef = useRef<HTMLButtonElement | null>(null)
+        const sessionStartRef = useRef<number>(Date.now())
+        const trialEntryRef = useRef<string>('hero')
 
 	// Slider state
 	const sliderRef = useRef<HTMLDivElement | null>(null)
@@ -88,8 +99,111 @@ export default function Landing25Minutes(): JSX.Element {
 		setSlideIdx(Math.max(0, Math.min(idx, scenarios.length - 1)))
 	}
 
-	const payLink = useMemo(() => 'https://example.com/yookassa-link', [])
-	const thisYear = useMemo(() => new Date().getFullYear(), [])
+        const monthlyPayLink = useMemo(
+                () => 'https://example.com/yookassa-link',
+                []
+        )
+        const telegramUsername = useMemo(() => 'twentyfive_windows', [])
+        const thisYear = useMemo(() => new Date().getFullYear(), [])
+
+        function resetContactForm() {
+                setContactName('')
+                setContactHandle('')
+                setContactNotes('')
+                setContactError('')
+                setIsContactSent(false)
+                setIsContactSending(false)
+        }
+
+        function closeContactModal() {
+                setIsPayOpen(false)
+                resetContactForm()
+        }
+
+        async function handleContactSubmit(e: React.FormEvent<HTMLFormElement>) {
+                e.preventDefault()
+                if (isContactSending) return
+                if (!contactHandle.trim()) {
+                        setContactError('Укажите удобный способ связи — Telegram, телефон или email')
+                        return
+                }
+
+                setIsContactSending(true)
+                setContactError('')
+                setIsContactSent(false)
+
+                const trimmedName = contactName.trim()
+                const trimmedContact = contactHandle.trim()
+                const trimmedNotes = contactNotes.trim()
+                const entryPoint = trialEntryRef.current || 'unknown'
+                const sessionTime = Math.max(
+                        0,
+                        Math.round((Date.now() - sessionStartRef.current) / 1000)
+                )
+                const timezone =
+                        typeof Intl !== 'undefined'
+                                ? Intl.DateTimeFormat().resolvedOptions().timeZone
+                                : undefined
+                const url =
+                        typeof window !== 'undefined'
+                                ? window.location.href
+                                : 'https://25windows.ru'
+
+                try {
+                        const ok = await sendTrialContact({
+                                name: trimmedName,
+                                contact: trimmedContact,
+                                notes: trimmedNotes || undefined,
+                                entryPoint,
+                                sessionTime,
+                                url,
+                                timezone
+                        })
+
+                        if (ok) {
+                                setIsContactSent(true)
+                                setContactError('')
+                        } else {
+                                setContactError(
+                                        `Не получилось отправить. Напишите нам в Telegram @${telegramUsername}`
+                                )
+                        }
+                } catch (error) {
+                        console.error('Не удалось отправить контакт', error)
+                        setContactError(
+                                `Не получилось отправить. Напишите нам в Telegram @${telegramUsername}`
+                        )
+                } finally {
+                        setIsContactSending(false)
+                }
+        }
+
+        function openContactModal(source: string) {
+                trialEntryRef.current = source
+                resetContactForm()
+                setIsPayOpen(true)
+                const sessionTime = Math.max(
+                        0,
+                        Math.round((Date.now() - sessionStartRef.current) / 1000)
+                )
+                const timezone =
+                        typeof Intl !== 'undefined'
+                                ? Intl.DateTimeFormat().resolvedOptions().timeZone
+                                : undefined
+                const url =
+                        typeof window !== 'undefined'
+                                ? window.location.href
+                                : 'https://25windows.ru'
+
+                sendTrialClick({
+                        entryPoint: source,
+                        sessionTime,
+                        url,
+                        timezone
+                }).catch((error) => {
+                        console.error('Не удалось отправить событие пробной недели', error)
+                })
+        }
 
 	function openScenario(i: number) {
 		setActiveScenarioIndex(i)
@@ -295,13 +409,13 @@ export default function Landing25Minutes(): JSX.Element {
 							}}
 						>
 							<div className='grid grid-cols-2 gap-2'>
-								<button
-									id='hero-cta'
-									onClick={() => setIsPayOpen(true)}
-									className={`px-3 py-3 min-h-[44px] rounded-2xl font-semibold text-[15px] ${UI.cta}`}
-								>
-									Начать 7 дней / 99 ₽
-								</button>
+                                                                <button
+                                                                        id='hero-cta'
+                                                                        onClick={() => openContactModal('hero-cta')}
+                                                                        className={`px-3 py-3 min-h-[44px] rounded-2xl font-semibold text-[15px] ${UI.cta}`}
+                                                                >
+                                                                        Получить 7 дней бесплатно
+                                                                </button>
 								<a
 									href='#scenarios-title'
 									className='px-3 py-3 min-h-[44px] rounded-2xl font-semibold text-[15px] border text-gray-800 text-center'
@@ -611,32 +725,32 @@ export default function Landing25Minutes(): JSX.Element {
 			{/* PRICING */}
 			<section id='price' className='max-w-6xl mx-auto px-4 pb-12'>
 				<h2 className='text-2xl md:text-3xl font-semibold'>Тарифы</h2>
-				<p className='mt-1 text-sm text-gray-600'>
-					Начните с недели, а потом переходите на месяц — когда войдёте в
-					ритм.
-				</p>
+                                <p className='mt-1 text-sm text-gray-600'>
+                                        Начните с бесплатной недели, а потом переходите на месяц — когда
+                                        войдёте в ритм.
+                                </p>
 				<div className='mt-6 grid md:grid-cols-2 gap-6'>
 					{/* Старт */}
 					<div
 						data-price-card
 						className='rounded-3xl border p-6 ring-2 ring-orange-600'
 					>
-						<div className='text-sm font-semibold text-orange-700'>
-							Старт • лучший выбор
-						</div>
-						<div className='mt-2 text-4xl font-extrabold'>99 ₽</div>
-						<div className='text-xs text-gray-500'>7 дней доступа</div>
-						<ul className='mt-4 text-sm text-gray-700 space-y-2 list-disc pl-4'>
-							<li>Все сценарии недели</li>
-							<li>Напоминания «If‑Then»</li>
-							<li>Отмена в один клик</li>
-						</ul>
-						<button
-							onClick={() => setIsPayOpen(true)}
-							className={`mt-5 inline-flex w-full justify-center px-4 py-3 rounded-2xl font-semibold ${UI.cta}`}
-						>
-							Оплатить 99 ₽ и начать
-						</button>
+                                                <div className='text-sm font-semibold text-orange-700'>
+                                                        Старт • пробная неделя
+                                                </div>
+                                                <div className='mt-2 text-4xl font-extrabold text-orange-700'>Бесплатно</div>
+                                                <div className='text-xs text-gray-500'>7 дней доступа</div>
+                                                <ul className='mt-4 text-sm text-gray-700 space-y-2 list-disc pl-4'>
+                                                        <li>Все сценарии недели в Telegram‑боте</li>
+                                                        <li>Напоминания «If‑Then»</li>
+                                                        <li>Поддержка в чате</li>
+                                                </ul>
+                                                <button
+                                                        onClick={() => openContactModal('pricing-trial')}
+                                                        className={`mt-5 inline-flex w-full justify-center px-4 py-3 rounded-2xl font-semibold ${UI.cta}`}
+                                                >
+                                                        Получить 7 дней бесплатно
+                                                </button>
 					</div>
 
 					{/* Подписка */}
@@ -651,12 +765,14 @@ export default function Landing25Minutes(): JSX.Element {
 							<li>Семейные челленджи</li>
 							<li>История прогресса</li>
 						</ul>
-						<button
-							onClick={() => setIsPayOpen(true)}
-							className={`mt-5 inline-flex w-full justify-center px-4 py-3 rounded-2xl font-semibold ${UI.cta}`}
-						>
-							Оформить подписку
-						</button>
+                                                <a
+                                                        href={monthlyPayLink}
+                                                        target='_blank'
+                                                        rel='noreferrer'
+                                                        className={`mt-5 inline-flex w-full justify-center px-4 py-3 rounded-2xl font-semibold text-center ${UI.cta}`}
+                                                >
+                                                        Оформить подписку
+                                                </a>
 					</div>
 				</div>
 
@@ -765,12 +881,12 @@ export default function Landing25Minutes(): JSX.Element {
 					<span className='text-xs text-gray-600'>
 						Готовы вернуть 25 минут сегодня?
 					</span>
-					<button
-						onClick={() => setIsPayOpen(true)}
-						className={`px-4 py-2 min-h-[44px] rounded-xl text-sm font-semibold ${UI.cta} `}
-					>
-						Начать 7 дней / 99 ₽
-					</button>
+                                        <button
+                                                onClick={() => openContactModal('sticky-cta')}
+                                                className={`px-4 py-2 min-h-[44px] rounded-xl text-sm font-semibold ${UI.cta} `}
+                                        >
+                                                Получить 7 дней бесплатно
+                                        </button>
 				</div>
 			)}
 
@@ -780,7 +896,7 @@ export default function Landing25Minutes(): JSX.Element {
 					className='fixed inset-0 z-50 grid place-items-center p-4'
 					role='dialog'
 					aria-modal='true'
-					onClick={() => setIsPayOpen(false)}
+                                        onClick={closeContactModal}
 				>
 					<div className='absolute inset-0 bg-black/45' />
 					<div
@@ -788,62 +904,128 @@ export default function Landing25Minutes(): JSX.Element {
 						onClick={(e) => e.stopPropagation()}
 					>
 						<div className='h-1.5 bg-gradient-to-r from-orange-500 to-orange-700' />
-						<div className='p-7'>
-							<div className='flex items-start justify-between'>
-								<h3 className='text-2xl font-bold text-gray-900'>
-									Оплата доступа
-								</h3>
-								<button
-									onClick={() => setIsPayOpen(false)}
-									className='text-gray-400 hover:text-gray-700 text-xl'
-									aria-label='Закрыть'
-								>
-									×
-								</button>
-							</div>
-							<div className='mt-5 rounded-2xl border border-orange-100 bg-orange-50 p-5'>
-								<div className='text-sm text-gray-600'>Тариф</div>
-								<div className='mt-1 flex items-baseline justify-between'>
-									<div className='font-semibold'>Старт — 7 дней</div>
-									<div className='text-2xl font-extrabold text-gray-900'>
-										99 ₽
-									</div>
-								</div>
-								<ul className='mt-3 text-sm text-gray-700 space-y-1 list-disc pl-5'>
-									<li>Моментальный доступ ко всем сценариям недели</li>
-									<li>Напоминания и «If‑Then» план</li>
-									<li>Отмена в 1 клик в любое время</li>
-								</ul>
-							</div>
-							<a
-								href={payLink}
-								target='_blank'
-								rel='noreferrer'
-								className={`mt-6 block w-full text-center py-3 rounded-2xl font-semibold ${UI.cta}`}
-							>
-								Перейти к оплате
-							</a>
-							<p className='mt-4 text-[11px] leading-snug text-gray-500 text-center'>
-								Нажимая «Перейти к оплате», вы соглашаетесь с{' '}
-								<button
-									className='underline hover:text-orange-700'
-									onClick={() => setIsOfferOpen(true)}
-								>
-									офертой
-								</button>{' '}
-								и{' '}
-								<button
-									className='underline hover:text-orange-700'
-									onClick={() => setIsPrivacyOpen(true)}
-								>
-									политикой конфиденциальности
-								</button>
-								.
-							</p>
-						</div>
-					</div>
-				</div>
-			)}
+                                                <div className='p-7'>
+                                                        <div className='flex items-start justify-between'>
+                                                                <h3 className='text-2xl font-bold text-gray-900'>
+                                                                        Получить 7 бесплатных дней
+                                                                </h3>
+                                                                <button
+                                                                        onClick={closeContactModal}
+                                                                        className='text-gray-400 hover:text-gray-700 text-xl'
+                                                                        aria-label='Закрыть'
+                                                                >
+                                                                        ×
+                                                                </button>
+                                                        </div>
+                                                        <div className='mt-5 rounded-2xl border border-orange-100 bg-orange-50 p-5 space-y-3'>
+                                                                <p className='text-sm text-gray-700'>
+                                                                        Оставьте контакт — пришлём ссылку на Telegram‑бота с доступом к пробной неделе.
+                                                                </p>
+                                                                <form className='space-y-3' onSubmit={handleContactSubmit}>
+                                                                        <label className='block text-sm text-gray-700'>
+                                                                                <span className='block text-xs font-semibold uppercase tracking-wide text-gray-500'>
+                                                                                        Имя
+                                                                                </span>
+                                                                                <input
+                                                                                        type='text'
+                                                                                        value={contactName}
+                                                                                        onChange={(e) => {
+                                                                                                setContactName(e.target.value)
+                                                                                                if (contactError) setContactError('')
+                                                                                        }}
+                                                                                        className='mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none'
+                                                                                        placeholder='Как к вам обращаться'
+                                                                                />
+                                                                        </label>
+                                                                        <label className='block text-sm text-gray-700'>
+                                                                                <span className='block text-xs font-semibold uppercase tracking-wide text-gray-500'>
+                                                                                        Контакт
+                                                                                </span>
+                                                                                <input
+                                                                                        type='text'
+                                                                                        value={contactHandle}
+                                                                                        onChange={(e) => {
+                                                                                                setContactHandle(e.target.value)
+                                                                                                if (contactError) setContactError('')
+                                                                                        }}
+                                                                                        className='mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none'
+                                                                                        placeholder='@username, телефон или email'
+                                                                                        required
+                                                                                />
+                                                                        </label>
+                                                                        <label className='block text-sm text-gray-700'>
+                                                                                <span className='block text-xs font-semibold uppercase tracking-wide text-gray-500'>
+                                                                                        Комментарий
+                                                                                </span>
+                                                                                <textarea
+                                                                                        value={contactNotes}
+                                                                                        onChange={(e) => {
+                                                                                                setContactNotes(e.target.value)
+                                                                                                if (contactError) setContactError('')
+                                                                                        }}
+                                                                                        className='mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none'
+                                                                                        placeholder='Возраст ребёнка или пожелания'
+                                                                                        rows={3}
+                                                                                />
+                                                                        </label>
+                                                                        {contactError && (
+                                                                                <p className='text-xs text-red-600'>{contactError}</p>
+                                                                        )}
+                                                                        <button
+                                                                                type='submit'
+                                                                                disabled={isContactSending}
+                                                                                className={`w-full py-3 rounded-2xl font-semibold ${UI.cta} ${
+                                                                                        isContactSending ? 'opacity-80 cursor-not-allowed' : ''
+                                                                                }`}
+                                                                        >
+                                                                                {isContactSending
+                                                                                        ? 'Отправляем…'
+                                                                                        : 'Отправить контакт в Telegram'}
+                                                                        </button>
+                                                                </form>
+                                                                {isContactSent && (
+                                                                        <div
+                                                                                role='status'
+                                                                                aria-live='polite'
+                                                                                className='rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 space-y-2'
+                                                                        >
+                                                                                <p>Спасибо! Мы получили контакт и пришлём ссылку на бота в течение дня.</p>
+                                                                                <p className='text-xs text-green-700'>
+                                                                                        Если ответа нет в течение часа, напишите нам в Telegram{' '}
+                                                                                        <a
+                                                                                                className='underline'
+                                                                                                href={`https://t.me/${telegramUsername}`}
+                                                                                                target='_blank'
+                                                                                                rel='noreferrer'
+                                                                                        >
+                                                                                                @{telegramUsername}
+                                                                                        </a>
+                                                                                        .
+                                                                                </p>
+                                                                        </div>
+                                                                )}
+                                                        </div>
+                                                        <p className='mt-4 text-[11px] leading-snug text-gray-500 text-center'>
+                                                                Отправляя контакт, вы соглашаетесь с{' '}
+                                                                <button
+                                                                        className='underline hover:text-orange-700'
+                                                                        onClick={() => setIsOfferOpen(true)}
+                                                                >
+                                                                        офертой
+                                                                </button>{' '}
+                                                                и{' '}
+                                                                <button
+                                                                        className='underline hover:text-orange-700'
+                                                                        onClick={() => setIsPrivacyOpen(true)}
+                                                                >
+                                                                        политикой конфиденциальности
+                                                                </button>
+                                                                .
+                                                        </p>
+                                                </div>
+                                        </div>
+                                </div>
+                        )}
 
 			{/* SCENARIO SLIDE-OVER */}
 			{isScenarioOpen && activeScenarioIndex !== null && (
@@ -1000,13 +1182,13 @@ export default function Landing25Minutes(): JSX.Element {
 								</details>
 							)}
 						</div>
-						<footer className='p-5 border-t'>
-							<button
-								onClick={() => setIsPayOpen(true)}
-								className={`w-full inline-flex justify-center px-4 py-3 rounded-xl font-semibold ${UI.cta}`}
-							>
-								Запустить сценарий
-							</button>
+                                                <footer className='p-5 border-t'>
+                                                        <button
+                                                                onClick={() => openContactModal('scenario-panel')}
+                                                                className={`w-full inline-flex justify-center px-4 py-3 rounded-xl font-semibold ${UI.cta}`}
+                                                        >
+                                                                Получить доступ в боте
+                                                        </button>
 						</footer>
 					</aside>
 				</div>
