@@ -67,6 +67,26 @@ export const sendTrialClick = async ({
         return sendTelegramMessage(message)
 }
 
+export const sendSubscriptionClick = async ({
+        entryPoint,
+        sessionTime,
+        url,
+        timezone
+}: TrialClickPayload) => {
+        const message = [
+                '💳 Клик на оформление подписки',
+                `📍 Источник: ${entryPoint}`,
+                `⏱ На сайте: ${sessionTime} сек.`,
+                timezone ? `🕰 Часовой пояс: ${timezone}` : null,
+                `🌐 Страница: ${url}`,
+                `🗓 МСК: ${formatTimestamp()}`
+        ]
+                .filter(Boolean)
+                .join('\n')
+
+        return sendTelegramMessage(message)
+}
+
 export const sendTrialContact = async ({
         name,
         contact,
@@ -78,6 +98,32 @@ export const sendTrialContact = async ({
 }: TrialContactPayload) => {
         const message = [
                 '🤝 Контакт для пробной недели',
+                `📇 Имя: ${name || 'не указано'}`,
+                `✉️ Контакт: ${contact}`,
+                notes ? `🗒 Комментарий: ${notes}` : null,
+                `📍 Источник: ${entryPoint}`,
+                `⏱ На сайте: ${sessionTime} сек.`,
+                timezone ? `🕰 Часовой пояс: ${timezone}` : null,
+                `🌐 Страница: ${url}`,
+                `🗓 МСК: ${formatTimestamp()}`
+        ]
+                .filter(Boolean)
+                .join('\n')
+
+        return sendTelegramMessage(message)
+}
+
+export const sendSubscriptionContact = async ({
+        name,
+        contact,
+        notes,
+        entryPoint,
+        sessionTime,
+        url,
+        timezone
+}: TrialContactPayload) => {
+        const message = [
+                '🧾 Контакт для подписки',
                 `📇 Имя: ${name || 'не указано'}`,
                 `✉️ Контакт: ${contact}`,
                 notes ? `🗒 Комментарий: ${notes}` : null,

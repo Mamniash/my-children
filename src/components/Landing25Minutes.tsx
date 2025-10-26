@@ -2,7 +2,12 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
-import { sendTrialClick, sendTrialContact } from '../helpers/telegramApi'
+import {
+        sendTrialClick,
+        sendTrialContact,
+        sendSubscriptionClick,
+        sendSubscriptionContact
+} from '../helpers/telegramApi'
 
 // Single-file TSX landing for preview.
 // Tailwind CSS expected. No sticky header. Hero = short description + photo.
@@ -30,6 +35,9 @@ export default function Landing25Minutes(): JSX.Element {
         const [isPayOpen, setIsPayOpen] = useState(false)
         const [isOfferOpen, setIsOfferOpen] = useState(false)
         const [isPrivacyOpen, setIsPrivacyOpen] = useState(false)
+        const [contactPurpose, setContactPurpose] = useState<'trial' | 'subscription'>(
+                'trial'
+        )
 
         const [contactName, setContactName] = useState('')
         const [contactHandle, setContactHandle] = useState('')
@@ -44,7 +52,7 @@ export default function Landing25Minutes(): JSX.Element {
         >(null)
         const closeScenarioBtnRef = useRef<HTMLButtonElement | null>(null)
         const sessionStartRef = useRef<number>(Date.now())
-        const trialEntryRef = useRef<string>('hero')
+        const contactEntryRef = useRef<string>('hero')
 
 	// Slider state
 	const sliderRef = useRef<HTMLDivElement | null>(null)
@@ -99,12 +107,128 @@ export default function Landing25Minutes(): JSX.Element {
 		setSlideIdx(Math.max(0, Math.min(idx, scenarios.length - 1)))
 	}
 
-        const monthlyPayLink = useMemo(
-                () => 'https://example.com/yookassa-link',
-                []
-        )
         const telegramUsername = useMemo(() => 'twentyfive_windows', [])
         const thisYear = useMemo(() => new Date().getFullYear(), [])
+
+        const contactModalContent = {
+                trial: {
+                        title: 'Получить 7 бесплатных дней',
+                        description:
+                                'Оставьте контакт — пришлём ссылку на Telegram‑бота с доступом к пробной неделе.',
+                        submitLabel: 'Отправить контакт в Telegram',
+                        successMain:
+                                'Спасибо! Мы получили контакт и пришлём ссылку на бота в течение дня.',
+                        successHint: 'Если ответа нет в течение часа — напишите нам в Telegram'
+                },
+                subscription: {
+                        title: 'Оформить подписку',
+                        description:
+                                'Оставьте контакт — менеджер свяжется с вами и поможет оформить подписку.',
+                        submitLabel: 'Отправить заявку',
+                        successMain:
+                                'Спасибо! Мы получили заявку. Менеджер напишет в ближайшее время и поможет оформить подписку.',
+                        successHint: 'Если долго нет ответа — дайте нам знать в Telegram'
+                }
+        } as const
+
+        const modalCopy = contactModalContent[contactPurpose]
+
+        const offerSections = [
+                {
+                        title: '1. Общие положения',
+                        body: [
+                                'Настоящая публичная оферта регулирует отношения между сервисом «25 минут» (ИП Короткие миссии) и пользователями, желающими получить доступ к сценариям семейных миссий.',
+                                'Приём оплаты или заявки на подписку на сайте https://25windows.ru означает полное и безоговорочное принятие условий оферты.'
+                        ]
+                },
+                {
+                        title: '2. Предмет оферты',
+                        body: [
+                                'Мы предоставляем доступ к Telegram‑боту с подборками игровых и развивающих сценариев для родителей и детей 5–11 лет.',
+                                'Пробная неделя предоставляется бесплатно, далее доступ осуществляется по подписке в соответствии с выбранным тарифом.'
+                        ]
+                },
+                {
+                        title: '3. Стоимость и оплата',
+                        body: [
+                                'Актуальная стоимость подписки указывается на странице тарифов. Мы оставляем за собой право менять стоимость, предварительно уведомив подписчиков через бот или email.',
+                                'Оплата принимается через платёжных провайдеров, перечисленных на сайте. Провайдер может потребовать подтверждение личности в соответствии с собственными правилами.'
+                        ]
+                },
+                {
+                        title: '4. Права и обязанности сторон',
+                        body: [
+                                'Пользователь обязуется предоставлять достоверные контактные данные и использовать сервис только для личных семейных целей.',
+                                'Мы обязуемся предоставлять доступ к актуальным сценариям, оперативно реагировать на обращения и информировать о существенных изменениях в работе сервиса.'
+                        ]
+                },
+                {
+                        title: '5. Ответственность и возвраты',
+                        body: [
+                                'Мы не несём ответственность за невозможность использования сервиса по причинам, связанным с оборудованием или интернет‑доступом пользователя.',
+                                `Возврат средств осуществляется в соответствии с законодательством РФ. Запрос можно направить на почту hello@25windows.ru или в Telegram @${telegramUsername}.`
+                        ]
+                },
+                {
+                        title: '6. Заключительные положения',
+                        body: [
+                                'Мы можем обновлять условия оферты. Новая редакция вступает в силу с момента публикации на сайте.',
+                                'Все споры решаются путём переговоров, а при недостижении соглашения — в соответствии с действующим законодательством РФ.'
+                        ]
+                }
+        ] as const
+
+        const privacySections = [
+                {
+                        title: '1. Общие положения',
+                        body: [
+                                'Политика конфиденциальности описывает, какие данные мы собираем и как их обрабатываем при использовании сервиса «25 минут».',
+                                'Используя сайт и Telegram‑бота, вы подтверждаете согласие с настоящей политикой.'
+                        ]
+                },
+                {
+                        title: '2. Какие данные мы собираем',
+                        body: [
+                                'Контактные данные, которые вы оставляете в форме (имя, никнейм в Telegram, телефон или email).',
+                                'Технические данные: cookies, IP‑адрес, информация о браузере и устройстве — для аналитики и безопасности.'
+                        ]
+                },
+                {
+                        title: '3. Зачем мы используем данные',
+                        body: [
+                                'Чтобы связаться с вами, предоставить доступ к пробной неделе или оформить подписку.',
+                                'Чтобы улучшать сервис, анализировать сценарии использования и отправлять сервисные уведомления.'
+                        ]
+                },
+                {
+                        title: '4. Передача третьим лицам',
+                        body: [
+                                'Мы передаём данные только платёжным и коммуникационным провайдерам, без которых оказание услуги невозможно (например, Telegram, платёжные системы).',
+                                'Мы не продаём и не передаём ваши данные иным сторонним организациям, за исключением случаев, предусмотренных законом.'
+                        ]
+                },
+                {
+                        title: '5. Хранение и безопасность',
+                        body: [
+                                'Контактные данные хранятся на защищённых серверах и в корпоративных аккаунтах мессенджеров с ограниченным доступом сотрудников.',
+                                'Мы применяем организационные и технические меры для защиты данных от утечек, но просим вас соблюдать цифровую гигиену и не передавать доступ третьим лицам.'
+                        ]
+                },
+                {
+                        title: '6. Ваши права',
+                        body: [
+                                'Вы можете запросить информацию о хранимых данных, потребовать их обновления или удаление, направив письмо на hello@25windows.ru.',
+                                'Вы вправе отозвать согласие на обработку данных, что может ограничить доступ к сервису.'
+                        ]
+                },
+                {
+                        title: '7. Контакты',
+                        body: [
+                                `По вопросам конфиденциальности можно написать на hello@25windows.ru или в Telegram @${telegramUsername}.`,
+                                'Мы отвечаем в рабочие дни с 10:00 до 19:00 по московскому времени.'
+                        ]
+                }
+        ] as const
 
         function resetContactForm() {
                 setContactName('')
@@ -118,6 +242,7 @@ export default function Landing25Minutes(): JSX.Element {
         function closeContactModal() {
                 setIsPayOpen(false)
                 resetContactForm()
+                setContactPurpose('trial')
         }
 
         async function handleContactSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -135,7 +260,7 @@ export default function Landing25Minutes(): JSX.Element {
                 const trimmedName = contactName.trim()
                 const trimmedContact = contactHandle.trim()
                 const trimmedNotes = contactNotes.trim()
-                const entryPoint = trialEntryRef.current || 'unknown'
+                const entryPoint = contactEntryRef.current || 'unknown'
                 const sessionTime = Math.max(
                         0,
                         Math.round((Date.now() - sessionStartRef.current) / 1000)
@@ -149,8 +274,13 @@ export default function Landing25Minutes(): JSX.Element {
                                 ? window.location.href
                                 : 'https://25windows.ru'
 
+                const sender =
+                        contactPurpose === 'subscription'
+                                ? sendSubscriptionContact
+                                : sendTrialContact
+
                 try {
-                        const ok = await sendTrialContact({
+                        const ok = await sender({
                                 name: trimmedName,
                                 contact: trimmedContact,
                                 notes: trimmedNotes || undefined,
@@ -178,9 +308,14 @@ export default function Landing25Minutes(): JSX.Element {
                 }
         }
 
-        function openContactModal(source: string) {
-                trialEntryRef.current = source
+        function openContactModal(
+                source: string,
+                purpose: 'trial' | 'subscription' = 'trial'
+        ) {
+                const entry = `${purpose}:${source}`
+                contactEntryRef.current = entry
                 resetContactForm()
+                setContactPurpose(purpose)
                 setIsPayOpen(true)
                 const sessionTime = Math.max(
                         0,
@@ -195,13 +330,20 @@ export default function Landing25Minutes(): JSX.Element {
                                 ? window.location.href
                                 : 'https://25windows.ru'
 
-                sendTrialClick({
-                        entryPoint: source,
+                const clickSender =
+                        purpose === 'subscription' ? sendSubscriptionClick : sendTrialClick
+
+                clickSender({
+                        entryPoint: entry,
                         sessionTime,
                         url,
                         timezone
                 }).catch((error) => {
-                        console.error('Не удалось отправить событие пробной недели', error)
+                        const label =
+                                purpose === 'subscription'
+                                        ? 'событие подписки'
+                                        : 'событие пробной недели'
+                        console.error(`Не удалось отправить ${label}`, error)
                 })
         }
 
@@ -223,15 +365,15 @@ export default function Landing25Minutes(): JSX.Element {
 	}
 
 	// Content
-	const heroImageUrl =
-		'https://images.unsplash.com/photo-1695400090309-6b0d6c2a1a6b?q=80&w=1600&auto=format&fit=crop'
+        const heroImageUrl =
+                'https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=1600&q=80'
 	const scenarios: Scenario[] = [
 		{
 			key: 'spy',
 			t: 'Шпион‑слова',
 			age: '7–9 лет',
 			dur: '25 минут',
-			img: 'https://images.unsplash.com/photo-1674699889972-0b3e8f8e4a6d?q=80&w=1200&auto=format&fit=crop',
+                        img: 'https://images.unsplash.com/photo-1542318428-29f26af1ff86?auto=format&fit=crop&w=1200&q=80',
 			short: 'Квест по дому с подсказками → секретное рукопожатие.',
 			long: 'Делаем мини‑квест из 3 подсказок. В каждой — слово‑улика. Ребёнок находит слово, произносит «пароль» и получает следующую подсказку. В финале — секретное рукопожатие/обнимашка и короткая похвала за конкретное действие.',
 			materials: 'Бумага, маркер, 3–5 стикеров, скотч',
@@ -263,7 +405,7 @@ export default function Landing25Minutes(): JSX.Element {
 			t: 'Командир кухни',
 			age: '9–11 лет',
 			dur: '25 минут',
-			img: 'https://images.unsplash.com/photo-1667485271634-1b4b1b5a66de?q=80&w=1200&auto=format&fit=crop',
+                        img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1200&q=80',
 			short: 'Мини‑миссия на кухне: тост‑сет → медаль повара.',
 			long: 'Ребёнок — «командир кухни», взрослый — ассистент. Задача: собрать тост‑сет. Важное: короткие команды, безопасные действия, финальная «медаль повара».',
 			materials: 'Хлеб/лаваш, намазка, тарелка, стакан, бумажная «медаль».',
@@ -295,7 +437,7 @@ export default function Landing25Minutes(): JSX.Element {
 			t: 'Охота на буквы',
 			age: '5–7 лет',
 			dur: '25 минут',
-			img: 'https://images.unsplash.com/photo-1728133902711-84e17dc75f47?q=80&w=1200&auto=format&fit=crop',
+                        img: 'https://images.unsplash.com/photo-1523475472560-d2df97ec485c?auto=format&fit=crop&w=1200&q=80',
 			short: 'Ищем буквы вокруг дома → мини‑награда.',
 			long: 'Выбираем «букву дня» и ищем 5 предметов на эту букву. Фотографируем/отмечаем галочкой. В финале — наклейка и проговаривание слов.',
 			materials: 'Карточки/наклейки, бумага, маркер.',
@@ -765,14 +907,12 @@ export default function Landing25Minutes(): JSX.Element {
 							<li>Семейные челленджи</li>
 							<li>История прогресса</li>
 						</ul>
-                                                <a
-                                                        href={monthlyPayLink}
-                                                        target='_blank'
-                                                        rel='noreferrer'
+                                                <button
+                                                        onClick={() => openContactModal('pricing-subscription', 'subscription')}
                                                         className={`mt-5 inline-flex w-full justify-center px-4 py-3 rounded-2xl font-semibold text-center ${UI.cta}`}
                                                 >
                                                         Оформить подписку
-                                                </a>
+                                                </button>
 					</div>
 				</div>
 
@@ -890,11 +1030,11 @@ export default function Landing25Minutes(): JSX.Element {
 				</div>
 			)}
 
-			{/* PAYMENT MODAL */}
-			{isPayOpen && (
-				<div
-					className='fixed inset-0 z-50 grid place-items-center p-4'
-					role='dialog'
+                        {/* PAYMENT MODAL */}
+                        {isPayOpen && (
+                                <div
+                                        className='fixed inset-0 z-50 grid place-items-center p-4'
+                                        role='dialog'
 					aria-modal='true'
                                         onClick={closeContactModal}
 				>
@@ -907,7 +1047,7 @@ export default function Landing25Minutes(): JSX.Element {
                                                 <div className='p-7'>
                                                         <div className='flex items-start justify-between'>
                                                                 <h3 className='text-2xl font-bold text-gray-900'>
-                                                                        Получить 7 бесплатных дней
+                                                                        {modalCopy.title}
                                                                 </h3>
                                                                 <button
                                                                         onClick={closeContactModal}
@@ -918,9 +1058,7 @@ export default function Landing25Minutes(): JSX.Element {
                                                                 </button>
                                                         </div>
                                                         <div className='mt-5 rounded-2xl border border-orange-100 bg-orange-50 p-5 space-y-3'>
-                                                                <p className='text-sm text-gray-700'>
-                                                                        Оставьте контакт — пришлём ссылку на Telegram‑бота с доступом к пробной неделе.
-                                                                </p>
+                                                                <p className='text-sm text-gray-700'>{modalCopy.description}</p>
                                                                 <form className='space-y-3' onSubmit={handleContactSubmit}>
                                                                         <label className='block text-sm text-gray-700'>
                                                                                 <span className='block text-xs font-semibold uppercase tracking-wide text-gray-500'>
@@ -978,9 +1116,7 @@ export default function Landing25Minutes(): JSX.Element {
                                                                                         isContactSending ? 'opacity-80 cursor-not-allowed' : ''
                                                                                 }`}
                                                                         >
-                                                                                {isContactSending
-                                                                                        ? 'Отправляем…'
-                                                                                        : 'Отправить контакт в Telegram'}
+                                                                                {isContactSending ? 'Отправляем…' : modalCopy.submitLabel}
                                                                         </button>
                                                                 </form>
                                                                 {isContactSent && (
@@ -989,9 +1125,9 @@ export default function Landing25Minutes(): JSX.Element {
                                                                                 aria-live='polite'
                                                                                 className='rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 space-y-2'
                                                                         >
-                                                                                <p>Спасибо! Мы получили контакт и пришлём ссылку на бота в течение дня.</p>
+                                                                                <p>{modalCopy.successMain}</p>
                                                                                 <p className='text-xs text-green-700'>
-                                                                                        Если ответа нет в течение часа, напишите нам в Telegram{' '}
+                                                                                        {modalCopy.successHint}{' '}
                                                                                         <a
                                                                                                 className='underline'
                                                                                                 href={`https://t.me/${telegramUsername}`}
@@ -1027,9 +1163,97 @@ export default function Landing25Minutes(): JSX.Element {
                                 </div>
                         )}
 
-			{/* SCENARIO SLIDE-OVER */}
-			{isScenarioOpen && activeScenarioIndex !== null && (
-				<div className='fixed inset-0 z-50' role='dialog' aria-modal='true'>
+                        {/* OFFER MODAL */}
+                        {isOfferOpen && (
+                                <div
+                                        className='fixed inset-0 z-[60] grid place-items-center p-4'
+                                        role='dialog'
+                                        aria-modal='true'
+                                        onClick={() => setIsOfferOpen(false)}
+                                >
+                                        <div className='absolute inset-0 bg-black/45' />
+                                        <div
+                                                className='relative bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden'
+                                                onClick={(e) => e.stopPropagation()}
+                                        >
+                                                <div className='h-1.5 bg-gradient-to-r from-orange-500 to-orange-700' />
+                                                <div className='p-7'>
+                                                        <div className='flex items-start justify-between'>
+                                                                <h3 className='text-2xl font-bold text-gray-900'>Публичная оферта</h3>
+                                                                <button
+                                                                        onClick={() => setIsOfferOpen(false)}
+                                                                        className='text-gray-400 hover:text-gray-700 text-xl'
+                                                                        aria-label='Закрыть'
+                                                                >
+                                                                        ×
+                                                                </button>
+                                                        </div>
+                                                        <div className='mt-5 max-h-[70vh] overflow-y-auto pr-2 text-sm text-gray-700 space-y-5'>
+                                                                {offerSections.map((section, idx) => (
+                                                                        <section key={idx} className='space-y-2'>
+                                                                                <h4 className='font-semibold text-gray-900'>
+                                                                                        {section.title}
+                                                                                </h4>
+                                                                                {section.body.map((paragraph, i) => (
+                                                                                        <p key={i} className='leading-relaxed'>
+                                                                                                {paragraph}
+                                                                                        </p>
+                                                                                ))}
+                                                                        </section>
+                                                                ))}
+                                                        </div>
+                                                </div>
+                                        </div>
+                                </div>
+                        )}
+
+                        {/* PRIVACY MODAL */}
+                        {isPrivacyOpen && (
+                                <div
+                                        className='fixed inset-0 z-[60] grid place-items-center p-4'
+                                        role='dialog'
+                                        aria-modal='true'
+                                        onClick={() => setIsPrivacyOpen(false)}
+                                >
+                                        <div className='absolute inset-0 bg-black/45' />
+                                        <div
+                                                className='relative bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden'
+                                                onClick={(e) => e.stopPropagation()}
+                                        >
+                                                <div className='h-1.5 bg-gradient-to-r from-orange-500 to-orange-700' />
+                                                <div className='p-7'>
+                                                        <div className='flex items-start justify-between'>
+                                                                <h3 className='text-2xl font-bold text-gray-900'>Политика конфиденциальности</h3>
+                                                                <button
+                                                                        onClick={() => setIsPrivacyOpen(false)}
+                                                                        className='text-gray-400 hover:text-gray-700 text-xl'
+                                                                        aria-label='Закрыть'
+                                                                >
+                                                                        ×
+                                                                </button>
+                                                        </div>
+                                                        <div className='mt-5 max-h-[70vh] overflow-y-auto pr-2 text-sm text-gray-700 space-y-5'>
+                                                                {privacySections.map((section, idx) => (
+                                                                        <section key={idx} className='space-y-2'>
+                                                                                <h4 className='font-semibold text-gray-900'>
+                                                                                        {section.title}
+                                                                                </h4>
+                                                                                {section.body.map((paragraph, i) => (
+                                                                                        <p key={i} className='leading-relaxed'>
+                                                                                                {paragraph}
+                                                                                        </p>
+                                                                                ))}
+                                                                        </section>
+                                                                ))}
+                                                        </div>
+                                                </div>
+                                        </div>
+                                </div>
+                        )}
+
+                        {/* SCENARIO SLIDE-OVER */}
+                        {isScenarioOpen && activeScenarioIndex !== null && (
+                                <div className='fixed inset-0 z-50' role='dialog' aria-modal='true'>
 					<div
 						className='absolute inset-0 bg-black/45'
 						onClick={closeScenario}
