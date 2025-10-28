@@ -9,7 +9,7 @@ export const VKMetrika = () => (
                 dangerouslySetInnerHTML={{
                         __html: `
 var _tmr = window._tmr || (window._tmr = []);
-_tmr.push({id: "3692734", type: "pageView", start: (new Date()).getTime()});
+_tmr.push({id: "3712650", type: "pageView", start: (new Date()).getTime()});
 (function (d, w, id) {
   if (d.getElementById(id)) return;
   var ts = d.createElement("script"); ts.type = "text/javascript"; ts.async = true; ts.id = id;
@@ -26,7 +26,7 @@ export const VKMetrikaNoScript = () => (
         <noscript>
                 <div>
                         <img
-                                src='https://top-fwz1.mail.ru/counter?id=3692734;js=na'
+                                src='https://top-fwz1.mail.ru/counter?id=3712650;js=na'
                                 style={{ position: 'absolute', left: '-9999px' }}
                                 alt='Top.Mail.Ru'
                         />
